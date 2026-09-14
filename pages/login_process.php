@@ -43,7 +43,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nombre_completo'];
             $_SESSION['user_avatar'] = $user['avatar'];
-            $_SESSION['user_role'] = $user['rol']; // Corregido: antes era user_rol
+            
+            // Consultar la tabla public.profiles para obtener el rol exacto (student o teacher)
+            try {
+                $stmtProfile = $pdo->prepare("SELECT role FROM public.profiles WHERE id = :id LIMIT 1");
+                $stmtProfile->execute([':id' => $user['id']]);
+                $profile = $stmtProfile->fetch(PDO::FETCH_ASSOC);
+                
+                $_SESSION['user_role'] = $profile ? $profile['role'] : (($user['rol'] === 'profesor') ? 'teacher' : 'student');
+            } catch (PDOException $e) {
+                // Fallback por si la tabla no existe
+                $_SESSION['user_role'] = ($user['rol'] === 'profesor') ? 'teacher' : 'student';
+            }
             
             // Redirigir al dashboard unificado
             header("Location: dashboard.php");

@@ -1,11 +1,9 @@
 <?php
+$require_auth = true;
+$require_teacher = true;
+require_once __DIR__ . '/../includes/auth_middleware.php';
+
 // pages/teacher_view.php
-// 1. Control de Acceso por Roles (Seguridad de Sesión)
-if (!isset($userRole) || $userRole !== 'profesor') {
-    // Bloquear acceso a estudiantes y redirigir
-    header("Location: dashboard.php?error=" . urlencode("Acceso denegado. Área exclusiva para docentes."));
-    exit;
-}
 ?>
 
 <script>

@@ -41,7 +41,18 @@ if ($require_auth) {
     }
 }
 
-// 4. Sistema de CSRF (Cross-Site Request Forgery)
+// 4. Verificación de Rol de Profesor
+// Si $require_teacher está definido como true, verificamos el rol
+$require_teacher = isset($require_teacher) ? $require_teacher : false;
+
+if ($require_teacher) {
+    if (!isset($_SESSION['user_role']) || ($_SESSION['user_role'] !== 'teacher' && $_SESSION['user_role'] !== 'profesor')) {
+        header("Location: student_view.php?error=" . urlencode("Acceso denegado. Esta sección es solo para profesores."));
+        exit;
+    }
+}
+
+// 5. Sistema de CSRF (Cross-Site Request Forgery)
 /**
  * Genera un token CSRF y lo guarda en la sesión.
  * @return string El token generado.
