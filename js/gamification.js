@@ -132,6 +132,64 @@ const EQ_Gamification = (() => {
         setTimeout(() => showAchievementToast(a), i * 2000);
       });
     }
+
+    checkStickers(userId, stats, user.stickers || []);
+  };
+
+  /* ─── VERIFICAR STICKERS ─── */
+  const checkStickers = (userId, stats, currentStickers) => {
+    // Definimos condiciones simples para desbloquear los stickers de data.js
+    const unlocks = [];
+    if (!currentStickers.includes('stk_1') && stats.totalQuizzes >= 1) unlocks.push('stk_1');
+    if (!currentStickers.includes('stk_2') && stats.streak >= 2) unlocks.push('stk_2');
+    if (!currentStickers.includes('stk_3') && stats.totalXP >= 300) unlocks.push('stk_3');
+    if (!currentStickers.includes('stk_4') && stats.fastCorrect >= 5) unlocks.push('stk_4');
+    if (!currentStickers.includes('stk_5') && stats.perfectQuizzes >= 1) unlocks.push('stk_5');
+    if (!currentStickers.includes('stk_6') && stats.level >= 3) unlocks.push('stk_6');
+    if (!currentStickers.includes('stk_7') && stats.streak >= 5) unlocks.push('stk_7');
+    if (!currentStickers.includes('stk_8') && stats.level >= 5) unlocks.push('stk_8');
+
+    if (unlocks.length > 0) {
+      const newStickers = [...currentStickers, ...unlocks];
+      EQ_Storage.updateUser(userId, { stickers: newStickers });
+      unlocks.forEach((stkId, i) => {
+        const stk = EQ_DATA.stickers.find(s => s.id === stkId);
+        if (stk) {
+          setTimeout(() => {
+            EQ_UI.showToast({ type: 'success', icon: stk.icon, title: '¡Nueva Calcomanía!', message: stk.name, duration: 4000 });
+          }, (i * 2000) + 1000);
+        }
+      });
+    }
+  };
+
+  /* ─── MISIONES DIARIAS ─── */
+  const getDailyMissions = (userId) => {
+    const user = EQ_Storage.findUserById(userId);
+    if (!user) return [];
+    
+    // Simular misiones estáticas por ahora (se podrían rotar por fecha)
+    const missions = [
+      { id: 'dm_1', title: 'Explorador Diario', desc: 'Inicia sesión hoy.', xp: 20, icon: '🚀', done: true },
+      { id: 'dm_2', title: 'Mente Activa', desc: 'Completa 1 Quiz de Matemática.', xp: 50, icon: '🔢', done: (user.stats.quizzesBySubject?.matematica || 0) > 0 },
+      { id: 'dm_3', title: 'Velocista', desc: 'Responde 3 preguntas rápido.', xp: 50, icon: '⚡', done: (user.stats.fastCorrect || 0) >= 3 }
+    ];
+
+    // Verificar si hay que dar recompensas (simplificado)
+    const claimedMissions = user.claimedMissions || [];
+    missions.forEach(m => {
+      if (m.done && !claimedMissions.includes(m.id)) {
+        addXP(userId, m.xp, 'mision');
+        claimedMissions.push(m.id);
+        setTimeout(() => EQ_UI.showToast({ type: 'success', icon: m.icon, title: 'Misión Completada', message: `+${m.xp} XP` }), 1000);
+      }
+    });
+    
+    if (claimedMissions.length !== (user.claimedMissions || []).length) {
+      EQ_Storage.updateUser(userId, { claimedMissions });
+    }
+
+    return missions.map(m => ({ ...m, claimed: claimedMissions.includes(m.id) }));
   };
 
   /* ─── XP FLOAT ANIMATION ─── */
@@ -185,16 +243,16 @@ const EQ_Gamification = (() => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const particles = Array.from({ length: 120 }, () => ({
+    const particles = Array.from({ length: 60 }, () => ({
       x: Math.random() * canvas.width,
       y: -10,
-      w: Math.random() * 10 + 5,
-      h: Math.random() * 6 + 3,
+      w: Math.random() * 8 + 4,
+      h: Math.random() * 5 + 3,
       r: Math.random() * Math.PI * 2,
-      vy: Math.random() * 4 + 2,
-      vx: (Math.random() - 0.5) * 3,
-      vr: (Math.random() - 0.5) * 0.2,
-      color: ['#2563EB','#7C3AED','#10B981','#F59E0B','#EF4444','#EC4899','#60A5FA'][Math.floor(Math.random()*7)],
+      vy: Math.random() * 1.5 + 1,
+      vx: (Math.random() - 0.5) * 1.5,
+      vr: (Math.random() - 0.5) * 0.05,
+      color: ['#93c5fd','#a7f3d0','#fde68a','#fbcfe8','#d8b4fe','#e2e8f0'][Math.floor(Math.random()*6)],
     }));
 
     let frame;
@@ -241,7 +299,8 @@ const EQ_Gamification = (() => {
 
   return {
     getLevelInfo, addXP, recordQuizResult,
-    calculateXP, checkAchievements,
+    calculateXP, checkAchievements, checkStickers,
+    getDailyMissions,
     showXPFloat, showLevelUp, launchConfetti,
     formatXP, getAccuracy,
   };

@@ -42,6 +42,25 @@ if (!isset($userRole) || $userRole !== 'alumno') exit;
         <div class="absolute right-0 top-0 w-64 h-64 bg-theme_accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
     </section>
 
+    <!-- 1.5 PANEL DE MISIONES DIARIAS -->
+    <section class="glass-panel p-6 sm:p-8 rounded-[2rem] border border-theme_border shadow-lg">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="font-heading text-2xl font-extrabold text-theme_text flex items-center gap-3">
+                <i class="fas fa-star text-yellow-400"></i> Misiones Diarias
+            </h2>
+            <button type="button" aria-label="Leer misiones en voz alta" onclick="window.speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance('Sección de misiones diarias. Tienes tareas cortas para ganar experiencia extra.'); u.rate = 0.9; window.speechSynthesis.speak(u);" class="w-10 h-10 bg-theme_bg text-theme_text hover:text-white hover:bg-theme_accent focus:outline-none focus-visible:ring-4 focus-visible:ring-theme_accent rounded-full flex items-center justify-center text-sm transition-colors border border-theme_border">
+                <i class="fas fa-volume-up"></i>
+            </button>
+        </div>
+        
+        <div id="daily-missions-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Rendered by JS -->
+            <div class="animate-pulse bg-theme_bg h-24 rounded-2xl border border-theme_border/50"></div>
+            <div class="animate-pulse bg-theme_bg h-24 rounded-2xl border border-theme_border/50"></div>
+            <div class="animate-pulse bg-theme_bg h-24 rounded-2xl border border-theme_border/50"></div>
+        </div>
+    </section>
+
     <!-- 2. FILA DE MÉTRICAS (Stat Cards) -->
     <section class="grid grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Stat 1: Quizzes -->

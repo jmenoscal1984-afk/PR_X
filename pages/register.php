@@ -1,4 +1,6 @@
 <?php
+$require_auth = false;
+require_once '../includes/auth_middleware.php';
 $base_dir = '../';
 $page_title = 'Crear Cuenta — EduQuest Bachillerato';
 require_once '../includes/head.php';
@@ -32,6 +34,7 @@ require_once '../includes/head.php';
       <?php endif; ?>
 
       <form action="register_process.php" method="POST" id="register-form" class="space-y-6">
+        <input type="hidden" name="csrf_token" value="<?= escape(generate_csrf_token()) ?>">
         
         <!-- Identidad (Avatar) -->
         <div>

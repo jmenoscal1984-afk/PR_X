@@ -108,10 +108,36 @@ const EQ_UI = (() => {
   /* ─── POPULATE TOPBAR ─── */
   const populateTopbar = (user) => {
     if (!user) return;
-    const xpChip    = document.getElementById('topbar-xp');
-    const streakChip = document.getElementById('topbar-streak');
-    if (xpChip)    xpChip.textContent    = `⭐ ${user.xp} XP`;
-    if (streakChip) streakChip.textContent = `🔥 ${user.streak} días`;
+    const topbarRight = document.querySelector('header .flex.items-center.gap-6');
+    if (!topbarRight) return;
+
+    // Remover chips antiguos si existen
+    const oldStreak = document.getElementById('topbar-streak');
+    if (oldStreak) oldStreak.remove();
+
+    // Propulsor de Fuego Cósmico (Racha)
+    let streakContainer = document.getElementById('stellar-streak-container');
+    if (!streakContainer) {
+      streakContainer = document.createElement('div');
+      streakContainer.id = 'stellar-streak-container';
+      streakContainer.className = 'flex items-center gap-2 px-4 py-2 rounded-xl bg-theme_panel border-[3px] border-theme_border shadow-sm';
+      // Insertar antes del selector de temas
+      topbarRight.insertBefore(streakContainer, topbarRight.firstChild);
+    }
+
+    const isHot = user.streak >= 3;
+    const fireColor = isHot ? 'text-orange-500' : 'text-orange-300 opacity-70';
+    const fireAnim = isHot ? 'animate-pulse drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]' : '';
+
+    streakContainer.innerHTML = `
+      <i class="fas fa-fire ${fireColor} ${fireAnim} text-xl"></i>
+      <span class="font-extrabold text-theme_text">${user.streak}</span>
+    `;
+    
+    // Si la racha es alta, el borde brilla
+    if (isHot) {
+      streakContainer.classList.add('border-orange-500/50', 'shadow-[0_0_15px_rgba(249,115,22,0.2)]');
+    }
   };
 
   /* ─── THEME ─── */
@@ -257,6 +283,54 @@ const EQ_UI = (() => {
     });
   };
 
+  /* ─── TEXT-TO-SPEECH (TTS) ─── */
+  const speak = (text) => {
+    if (!('speechSynthesis' in window)) {
+      showToast({ type: 'error', icon: '🔇', title: 'TTS no soportado', message: 'Tu navegador no soporta lectura en voz alta.' });
+      return;
+    }
+    window.speechSynthesis.cancel(); // Detener anterior
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1; // Tono ligeramente más amigable
+    window.speechSynthesis.speak(utterance);
+  };
+
+  /* ─── RENDER DAILY MISSIONS ─── */
+  const renderDailyMissions = (user) => {
+    const grid = document.getElementById('daily-missions-grid');
+    if (!grid || !user) return;
+    
+    const missions = EQ_Gamification.getDailyMissions(user.id);
+    grid.innerHTML = '';
+    
+    missions.forEach((m, i) => {
+      const isDone = m.claimed;
+      const card = document.createElement('button');
+      card.className = `w-full min-h-[72px] flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-theme_accent text-left group ${isDone ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-theme_panel border-theme_border hover:border-theme_accent hover:shadow-[0_0_15px_rgba(250,204,21,0.2)]'}`;
+      card.style.animation = `fadeInUp 0.5s ${i * 0.1}s ease both`;
+      
+      card.innerHTML = `
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl ${isDone ? 'bg-emerald-500/20 text-emerald-500' : 'bg-theme_bg text-theme_text_muted group-hover:bg-[rgba(250,204,21,0.1)] group-hover:text-yellow-500'} transition-colors flex items-center justify-center text-2xl shrink-0 border ${isDone ? 'border-emerald-500/30' : 'border-theme_border'}">
+            ${isDone ? '<i class="fas fa-check"></i>' : m.icon}
+          </div>
+          <div>
+            <h3 class="font-bold text-base sm:text-lg ${isDone ? 'text-emerald-500 line-through opacity-70' : 'text-theme_text'} leading-tight">${m.title}</h3>
+            <p class="text-xs sm:text-sm text-theme_text_muted">${m.desc}</p>
+          </div>
+        </div>
+        <div class="flex items-center shrink-0 ml-4">
+          <span class="bg-[rgba(250,204,21,0.2)] text-yellow-500 font-extrabold px-3 py-1.5 rounded-lg text-xs sm:text-sm border border-[rgba(250,204,21,0.3)] whitespace-nowrap">
+            +${m.xp} XP
+          </span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  };
+
   /* ─── INIT ALL ─── */
   const init = (user) => {
     loadTheme();
@@ -267,6 +341,7 @@ const EQ_UI = (() => {
     if (user) {
       populateSidebar(user);
       populateTopbar(user);
+      renderDailyMissions(user);
     }
     // Ripple on all .btn
     document.querySelectorAll('.btn').forEach(addRipple);
@@ -278,7 +353,7 @@ const EQ_UI = (() => {
     applyTheme, loadTheme,
     initScrollReveal, staggerChildren, animateProgress, animateCounter,
     addRipple, openModal, closeModal, initModals, confirm, initLogout,
-    init,
+    speak, init,
   };
 })();
 

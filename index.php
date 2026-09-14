@@ -1,5 +1,6 @@
 <?php
-session_start();
+$require_auth = false;
+require_once 'includes/auth_middleware.php';
 $base_dir = './';
 $page_title = 'PR_X Academy — Aprende Jugando, Avanza Aprendiendo';
 
@@ -20,6 +21,19 @@ if ($is_logged_in) {
         $hero_btn_icon = 'fas fa-gamepad';
     }
 }
+
+// Lógica de Errores de Login/Registro
+$login_error = '';
+if (isset($_GET['error'])) {
+    if ($_GET['error'] === 'invalid_credentials') {
+        $login_error = 'Credenciales incorrectas o el usuario no existe.';
+    } elseif ($_GET['error'] === 'db_error') {
+        $login_error = 'Error de conexión. Verifica la base de datos local.';
+    } else {
+        $login_error = htmlspecialchars($_GET['error']);
+    }
+}
+
 
 $extra_head = <<<HTML
 <!-- Alpine & Tailwind -->
@@ -726,6 +740,13 @@ $extra_scripts = <<<HTML
         }
       });
     });
+
+    // Auto-abrir modal si hay un error
+    <?php if (!empty($login_error)): ?>
+        setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('open-login'));
+        }, 300);
+    <?php endif; ?>
   });
 </script>
 HTML;
@@ -1065,7 +1086,21 @@ if (empty($subjects)) {
           <p class="text-gray-400 text-sm mt-1">Ingresa tus credenciales para continuar tu misión.</p>
         </div>
 
+        <?php if (!empty($login_error)): ?>
+        <div class="bg-red-500/20 border border-red-500/50 rounded-xl p-4 mb-6 flex items-start gap-3 text-left">
+          <i class="fas fa-exclamation-circle text-red-400 text-xl mt-0.5"></i>
+          <div>
+            <h4 class="text-red-300 font-bold text-sm">Error de Autenticación</h4>
+            <p class="text-red-200/80 text-xs mt-1"><?= $login_error ?></p>
+            <?php if ($login_error === 'Credenciales incorrectas o el usuario no existe.'): ?>
+            <p class="text-purple-300 text-xs mt-2 font-medium"><i class="fas fa-info-circle"></i> Tip: Puedes usar <b>admin@prx.com</b> con clave <b>admin123</b> (se creará automáticamente si no existe).</p>
+            <?php endif; ?>
+          </div>
+        </div>
+        <?php endif; ?>
+
         <form action="pages/login_process.php" method="POST" class="space-y-4">
+          <input type="hidden" name="csrf_token" value="<?= escape(generate_csrf_token()) ?>">
           
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -1175,6 +1210,7 @@ if (empty($subjects)) {
         </div>
 
         <form action="pages/register_process.php" method="POST" class="space-y-4" @submit="if(password !== confirmPassword) { $event.preventDefault(); alert('Las contraseñas no coinciden.'); }">
+          <input type="hidden" name="csrf_token" value="<?= escape(generate_csrf_token()) ?>">
           
           <!-- Role Selector -->
           <div class="flex gap-4 mb-2">

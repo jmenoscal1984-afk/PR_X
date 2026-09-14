@@ -21,6 +21,7 @@ const EQ_Quiz = (() => {
     startTime:    null,
     selectedLeft: null,  // for match mode
     matchedPairs: 0,
+    shields:      3,     // Energy shields
   };
 
   const TIMER_DEFAULT = 20;
@@ -47,7 +48,9 @@ const EQ_Quiz = (() => {
     state.wrong     = 0;
     state.fastCorrect = 0;
     state.startTime = Date.now();
-
+    state.shields   = 3;
+    
+    updateShieldsUI();
     renderQuestion();
   };
 
@@ -63,22 +66,29 @@ const EQ_Quiz = (() => {
     startTimer();
   };
 
-  /* ─── HEADER ─── */
+  /* ─── HEADER & SHIELDS ─── */
   const updateHeader = () => {
     const total = state.questions.length;
     const idx   = state.current;
 
-    setText('quiz-question-num', `Pregunta ${idx + 1} de ${total}`);
-    setText('quiz-score-display', `${state.score} pts`);
-    setText('quiz-correct-count', state.correct);
-    setText('quiz-wrong-count', state.wrong);
+    const qNum = document.getElementById('quiz-question-num');
+    if (qNum) qNum.textContent = `Pregunta ${idx + 1} / ${total}`;
 
     const progressFill = document.getElementById('quiz-progress-fill');
-    if (progressFill) progressFill.style.width = `${(idx / total) * 100}%`;
+    if (progressFill) progressFill.style.width = `${((idx) / total) * 100}%`;
+  };
 
-    const subjectInfo = EQ_DATA.subjects[state.subject];
-    const subjectEl = document.getElementById('quiz-subject-name');
-    if (subjectEl) subjectEl.textContent = `${subjectInfo?.icon || ''} ${subjectInfo?.name || ''}`;
+  const updateShieldsUI = () => {
+    const container = document.getElementById('energy-shields-container');
+    if (!container) return;
+    const icons = container.querySelectorAll('.shield-icon');
+    icons.forEach((icon, index) => {
+      if (index < state.shields) {
+        icon.classList.remove('broken');
+      } else {
+        icon.classList.add('broken');
+      }
+    });
   };
 
   /* ─── RENDER QUESTION CARD ─── */
@@ -86,9 +96,14 @@ const EQ_Quiz = (() => {
     const questionText = document.getElementById('quiz-question-text');
     const optionsArea  = document.getElementById('quiz-options-area');
     const explanation  = document.getElementById('quiz-explanation');
+    const ttsBtn       = document.getElementById('tts-btn');
 
     if (questionText) questionText.textContent = q.q;
-    if (explanation)  { explanation.textContent = ''; explanation.style.display = 'none'; }
+    if (ttsBtn) {
+      ttsBtn.onclick = () => EQ_UI.speak(q.q.replace(/'/g, "\\'"));
+    }
+    
+    if (explanation)  { explanation.textContent = ''; explanation.style.display = 'none'; explanation.classList.add('hidden'); }
 
     if (!optionsArea) return;
     optionsArea.innerHTML = '';
@@ -101,14 +116,13 @@ const EQ_Quiz = (() => {
 
   /* ─── QUIZ (Opción múltiple) ─── */
   const renderQuizOptions = (q, container) => {
-    const letters = ['A', 'B', 'C', 'D'];
     const div = document.createElement('div');
-    div.className = 'quiz-options';
+    div.className = 'quiz-options-grid';
 
     q.options.forEach((opt, i) => {
       const btn = document.createElement('button');
-      btn.className = 'quiz-option';
-      btn.innerHTML = `<span class="quiz-option-letter">${letters[i]}</span>${opt}`;
+      btn.className = 'quiz-option-big';
+      btn.innerHTML = `<span>${opt}</span>`;
       btn.addEventListener('click', () => handleQuizAnswer(i, q, div));
       div.appendChild(btn);
     });
@@ -120,12 +134,17 @@ const EQ_Quiz = (() => {
     state.answered = true;
     stopTimer();
 
-    const options = container.querySelectorAll('.quiz-option');
+    const options = container.querySelectorAll('.quiz-option-big');
     options.forEach(o => o.classList.add('disabled'));
 
     const isCorrect = chosen === q.answer;
     options[chosen].classList.add(isCorrect ? 'correct' : 'wrong');
-    if (!isCorrect) options[q.answer].classList.add('correct');
+    options[chosen].innerHTML += isCorrect ? ' <i class="fas fa-check-circle ml-auto text-3xl"></i>' : ' <i class="fas fa-times-circle ml-auto text-3xl"></i>';
+    
+    if (!isCorrect) {
+      options[q.answer].classList.add('correct');
+      options[q.answer].innerHTML += ' <i class="fas fa-check-circle ml-auto text-3xl"></i>';
+    }
 
     handleResult(isCorrect, q);
   };
@@ -158,7 +177,12 @@ const EQ_Quiz = (() => {
     const chosenIdx = chosen ? 0 : 1;
     const correctIdx = q.answer ? 0 : 1;
     btns[chosenIdx].classList.add(isCorrect ? 'correct' : 'wrong');
-    if (!isCorrect) btns[correctIdx].classList.add('correct');
+    btns[chosenIdx].innerHTML += isCorrect ? ' <i class="fas fa-check-circle" style="margin-left:8px;"></i>' : ' <i class="fas fa-times-circle" style="margin-left:8px;"></i>';
+    
+    if (!isCorrect) {
+      btns[correctIdx].classList.add('correct');
+      btns[correctIdx].innerHTML += ' <i class="fas fa-check-circle" style="margin-left:8px;"></i>';
+    }
 
     handleResult(isCorrect, q);
   };
@@ -292,34 +316,46 @@ const EQ_Quiz = (() => {
   /* ─── HANDLE RESULT ─── */
   const handleResult = (isCorrect, q) => {
     if (isCorrect) {
+      if (window.EQ_Sounds) EQ_Sounds.playCorrect();
       const pts = calculatePoints();
       state.correct++;
       state.score += pts;
       if (state.timeLeft > 15) state.fastCorrect++;
     } else {
+      if (window.EQ_Sounds) EQ_Sounds.playWrong();
       state.wrong++;
+      state.shields--;
+      updateShieldsUI();
     }
 
     // Show explanation
     const expEl = document.getElementById('quiz-explanation');
     if (expEl && q.explanation) {
       expEl.innerHTML = `<strong>${isCorrect ? '✅ ¡Correcto!' : '❌ Incorrecto.'}</strong> ${q.explanation}`;
+      expEl.classList.remove('hidden');
       expEl.style.display = 'block';
-      expEl.style.cssText = `
-        display:block; padding:14px 18px; border-radius:12px; margin-top:16px;
-        background:${isCorrect ? 'var(--secondary-light)' : 'var(--danger-light)'};
-        color:${isCorrect ? 'var(--secondary-dark)' : '#991B1B'};
-        font-size:0.9rem; line-height:1.5; animation: fadeInUp 0.3s ease;
-      `;
+      if (isCorrect) {
+        expEl.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-400');
+        expEl.classList.remove('bg-red-500/10', 'border-red-500/30', 'text-red-400');
+      } else {
+        expEl.classList.add('bg-red-500/10', 'border-red-500/30', 'text-red-400');
+        expEl.classList.remove('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-400');
+      }
     }
 
-    setText('quiz-score-display', `${state.score} pts`);
+    // Comprobar si se acabaron los escudos
+    if (state.shields <= 0) {
+      setTimeout(() => {
+        showDefeat();
+      }, 2000);
+      return;
+    }
 
-    // Auto-advance after 1.8s
+    // Auto-advance
     setTimeout(() => {
       state.current++;
       renderQuestion();
-    }, 1800);
+    }, 2500);
   };
 
   /* ─── TIMER ─── */
@@ -335,14 +371,7 @@ const EQ_Quiz = (() => {
         stopTimer();
         if (!state.answered) {
           state.answered = true;
-          state.wrong++;
-          // Show correct answer hint
-          const expEl = document.getElementById('quiz-explanation');
-          if (expEl) {
-            expEl.innerHTML = '⏰ <strong>¡Tiempo agotado!</strong> ' + (state.questions[state.current]?.explanation || '');
-            expEl.style.cssText = 'display:block;padding:14px 18px;border-radius:12px;margin-top:16px;background:var(--warning-light);color:#92400E;font-size:0.9rem;';
-          }
-          setTimeout(() => { state.current++; renderQuestion(); }, 1800);
+          handleResult(false, state.questions[state.current]);
         }
       }
     }, 1000);
@@ -354,25 +383,39 @@ const EQ_Quiz = (() => {
   };
 
   const updateTimerUI = () => {
-    const timerEl  = document.getElementById('quiz-timer-val');
-    const circleEl = document.getElementById('quiz-timer-circle');
-    const timerBox = document.getElementById('quiz-timer');
-
-    if (timerEl) timerEl.textContent = state.timeLeft;
-
-    if (circleEl) {
-      const circumference = 220;
-      const offset = circumference - (state.timeLeft / TIMER_DEFAULT) * circumference;
-      circleEl.style.strokeDashoffset = offset;
-      circleEl.style.stroke = state.timeLeft <= 5 ? 'var(--danger)' : 'var(--primary)';
-    }
-
-    if (timerBox) {
-      timerBox.classList.toggle('urgent', state.timeLeft <= 5);
+    const bar = document.getElementById('timer-bar-fill');
+    if (bar) {
+      const pct = (state.timeLeft / TIMER_DEFAULT) * 100;
+      bar.style.width = `${pct}%`;
+      if (state.timeLeft <= 5) {
+        bar.classList.add('bg-red-500');
+        bar.classList.remove('bg-yellow-400');
+      } else {
+        bar.classList.add('bg-yellow-400');
+        bar.classList.remove('bg-red-500');
+      }
     }
   };
 
-  /* ─── RESULTS ─── */
+  /* ─── RESULTS & DEFEAT ─── */
+  const showDefeat = () => {
+    const container = document.getElementById('quiz-main-area');
+    if (!container) return;
+
+    container.innerHTML = `
+      <div class="glass-panel p-8 md:p-12 rounded-[2.5rem] border border-red-500/30 text-center animate-[scaleIn_0.5s_ease-out] shadow-[0_0_50px_rgba(239,68,68,0.2)] max-w-2xl mx-auto w-full">
+        <div class="text-6xl mb-6">💥</div>
+        <h2 class="font-heading text-3xl font-extrabold text-red-400 mb-4">¡Escudos Agotados!</h2>
+        <p class="text-theme_text_muted text-lg mb-8">No te preocupes, las estrellas se están recargando. La práctica hace al maestro. ¡Inténtalo de nuevo!</p>
+        
+        <div class="flex justify-center gap-4">
+          <button class="btn bg-theme_panel text-theme_text border border-theme_border hover:border-theme_accent px-8 py-4 rounded-2xl font-bold text-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-theme_accent" onclick="window.location.href='subjects.php'">Salir</button>
+          <button class="btn bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] px-8 py-4 rounded-2xl font-bold text-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-theme_accent" onclick="location.reload()">Reintentar</button>
+        </div>
+      </div>
+    `;
+  };
+
   const showResults = () => {
     stopTimer();
     const total = state.questions.length;
@@ -393,46 +436,53 @@ const EQ_Quiz = (() => {
       });
     }
 
+    const progressFill = document.getElementById('quiz-progress-fill');
+    if (progressFill) progressFill.style.width = '100%';
+
     const container = document.getElementById('quiz-main-area');
     if (!container) return;
 
-    const grade = pct >= 90 ? '🌟 Excelente' : pct >= 70 ? '😊 Bien' : pct >= 50 ? '🙂 Regular' : '💪 Sigue Practicando';
-
     container.innerHTML = `
-      <div class="quiz-results animate-scale-in">
-        <div style="font-size:4rem;margin-bottom:12px">${isPerfect ? '🏆' : pct >= 70 ? '🎉' : '📚'}</div>
-        <div class="results-grade">${grade}</div>
-        <div class="results-score">${pct}%</div>
-        <div class="results-stats">
-          <div class="results-stat">
-            <div class="results-stat-val" style="color:var(--secondary)">${state.correct}</div>
-            <div class="results-stat-lbl">Correctas</div>
+      <div class="glass-panel p-8 md:p-12 rounded-[2.5rem] border border-theme_border text-center animate-[scaleIn_0.5s_ease-out] shadow-[0_0_50px_rgba(250,204,21,0.2)] max-w-2xl mx-auto w-full relative overflow-hidden">
+        
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500/20 via-transparent to-transparent pointer-events-none"></div>
+
+        <div class="text-7xl mb-6 relative z-10">${isPerfect ? '🏆' : pct >= 70 ? '🎉' : '📚'}</div>
+        <h2 class="font-heading text-4xl font-extrabold text-white mb-2 relative z-10">¡Misión Completada!</h2>
+        <p class="text-theme_accent font-bold text-xl mb-8 relative z-10">Precisión: ${pct}%</p>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 relative z-10">
+          <div class="bg-theme_bg p-4 rounded-2xl border border-theme_border">
+            <div class="text-2xl text-emerald-400 font-bold mb-1">${state.correct}</div>
+            <div class="text-xs text-theme_text_muted uppercase tracking-wider font-bold">Aciertos</div>
           </div>
-          <div class="results-stat">
-            <div class="results-stat-val" style="color:var(--danger)">${state.wrong}</div>
-            <div class="results-stat-lbl">Incorrectas</div>
+          <div class="bg-theme_bg p-4 rounded-2xl border border-theme_border">
+            <div class="text-2xl text-red-400 font-bold mb-1">${state.wrong}</div>
+            <div class="text-xs text-theme_text_muted uppercase tracking-wider font-bold">Fallos</div>
           </div>
-          <div class="results-stat">
-            <div class="results-stat-val">${state.score}</div>
-            <div class="results-stat-lbl">Puntos</div>
+          <div class="bg-theme_bg p-4 rounded-2xl border border-theme_border">
+            <div class="text-2xl text-blue-400 font-bold mb-1">${elapsed}s</div>
+            <div class="text-xs text-theme_text_muted uppercase tracking-wider font-bold">Tiempo</div>
           </div>
-          <div class="results-stat">
-            <div class="results-stat-val">${elapsed}s</div>
-            <div class="results-stat-lbl">Tiempo</div>
+          <div class="bg-theme_bg p-4 rounded-2xl border border-theme_border border-yellow-500/30">
+            <div class="text-2xl text-yellow-400 font-bold mb-1">${state.score}</div>
+            <div class="text-xs text-theme_text_muted uppercase tracking-wider font-bold">Puntos</div>
           </div>
         </div>
-        ${xpGained ? `<div class="xp-chip" style="font-size:1.1rem;padding:10px 20px;margin:16px auto;display:inline-flex">⭐ +${xpGained} XP ganados</div>` : ''}
-        ${isPerfect ? '<div class="tag tag-warning" style="font-size:1rem;padding:8px 16px;margin:8px auto">🎯 ¡Quiz perfecto!</div>' : ''}
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px">
-          <button class="btn btn-primary btn-lg" onclick="location.reload()">Jugar de nuevo 🔄</button>
-          <button class="btn btn-ghost btn-lg" onclick="window.location.href='subjects.html'">Volver a Materias</button>
-          <button class="btn btn-secondary btn-lg" onclick="window.location.href='dashboard.html'">Dashboard 🏠</button>
+
+        ${xpGained ? `<div class="inline-block bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 px-6 py-3 rounded-full font-bold text-lg mb-8 relative z-10 animate-bounce">⭐ +${xpGained} XP Ganados</div>` : ''}
+
+        <div class="flex justify-center gap-4 relative z-10">
+          <button class="btn bg-theme_panel text-theme_text border border-theme_border hover:border-theme_accent px-6 py-3 rounded-2xl font-bold text-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-theme_accent" onclick="window.location.href='subjects.php'">Continuar Viaje</button>
         </div>
       </div>
     `;
 
     if (isPerfect || pct >= 80) {
-      setTimeout(EQ_Gamification.launchConfetti, 300);
+      // Small delay for the CSS animation to play
+      setTimeout(() => {
+        if(window.EQ_Gamification) EQ_Gamification.launchConfetti();
+      }, 300);
     }
   };
 

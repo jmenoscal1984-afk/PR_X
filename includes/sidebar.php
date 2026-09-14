@@ -48,9 +48,9 @@ $base_dir = $base_dir ?? '../';
     <a href="<?= $base_dir ?>pages/settings.php" class="nav-item <?= $current_page == 'settings.php' ? 'active' : '' ?>" data-page="settings.php">
       <span class="nav-item-icon"><i class="fas fa-cog"></i></span> Configuración
     </a>
-    <button class="nav-item" data-logout style="width:100%;text-align:left;background:none;border:none;cursor:pointer;color:inherit">
+    <a href="<?= $base_dir ?>pages/logout.php" class="nav-item" style="color:var(--danger)">
       <span class="nav-item-icon"><i class="fas fa-sign-out-alt"></i></span> Cerrar Sesión
-    </button>
+    </a>
   </nav>
 
   <div class="sidebar-footer">

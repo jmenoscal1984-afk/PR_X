@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once '../includes/auth_middleware.php';
 require_once '../includes/conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -18,6 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validaciones básicas
     if (empty($nombre) || empty($correo) || empty($password)) {
         die("Error: Todos los campos son obligatorios.");
+    }
+
+    // Validación CSRF
+    $csrf_token = $_POST['csrf_token'] ?? '';
+    if (!validate_csrf_token($csrf_token)) {
+        die("Error: Token CSRF inválido.");
     }
 
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
@@ -61,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user && isset($user['id'])) {
             // Registro exitoso, inicializar sesión
+            session_regenerate_id(true); // Prevenir fixation
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $nombre;
             $_SESSION['user_avatar'] = $avatar;

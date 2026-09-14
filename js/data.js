@@ -456,16 +456,28 @@ const EQ_DATA = {
     ],
   },
 
-  /* ─── NIVELES ─── */
+  /* ─── NIVELES (Temática Espacial) ─── */
   levels: [
-    { level: 1, name: 'Novato',          minXP: 0,     icon: '🌱' },
-    { level: 2, name: 'Aprendiz',        minXP: 200,   icon: '📖' },
-    { level: 3, name: 'Explorador',      minXP: 500,   icon: '🔭' },
-    { level: 4, name: 'Aventurero',      minXP: 1000,  icon: '⚔️' },
-    { level: 5, name: 'Experto',         minXP: 2000,  icon: '🎯' },
-    { level: 6, name: 'Maestro',         minXP: 4000,  icon: '🏆' },
-    { level: 7, name: 'Gran Maestro',    minXP: 7500,  icon: '👑' },
-    { level: 8, name: 'Leyenda EduQuest',minXP: 12000, icon: '⭐' },
+    { level: 1, name: 'Astronauta Novato',    minXP: 0,     icon: '🧑‍🚀' },
+    { level: 2, name: 'Explorador Estelar',   minXP: 200,   icon: '🚀' },
+    { level: 3, name: 'Piloto de Galaxia',    minXP: 500,   icon: '🛸' },
+    { level: 4, name: 'Comandante Cósmico',   minXP: 1000,  icon: '☄️' },
+    { level: 5, name: 'Capitán de Flota',     minXP: 2000,  icon: '🛰️' },
+    { level: 6, name: 'Almirante Interestelar',minXP: 4000,  icon: '🌌' },
+    { level: 7, name: 'Guardián del Universo',minXP: 7500,  icon: '🪐' },
+    { level: 8, name: 'Leyenda Cósmica',      minXP: 12000, icon: '🌟' },
+  ],
+
+  /* ─── STICKERS / CALCOMANÍAS ─── */
+  stickers: [
+    { id: 'stk_1', name: 'Estrella Fugaz', desc: 'Tu primera chispa de aprendizaje.', icon: '💫' },
+    { id: 'stk_2', name: 'Satélite Curiosity', desc: '¡Has demostrado gran curiosidad!', icon: '🛰️' },
+    { id: 'stk_3', name: 'Alien Amistoso', desc: 'Haciendo nuevos amigos en la academia.', icon: '👽' },
+    { id: 'stk_4', name: 'Cohete Veloz', desc: '¡Completaste una misión a la velocidad de la luz!', icon: '🚀' },
+    { id: 'stk_5', name: 'Planeta Dorado', desc: 'Conseguiste tu primera victoria de oro.', icon: '🪐' },
+    { id: 'stk_6', name: 'Agujero Negro', desc: 'Misterio desbloqueado.', icon: '🌌' },
+    { id: 'stk_7', name: 'Gato Espacial', desc: 'Mascota fiel para largos viajes.', icon: '🐱‍🚀' },
+    { id: 'stk_8', name: 'Supernova', desc: 'Alcanzaste el máximo poder estelar.', icon: '💥' }
   ],
 
   /* ─── LOGROS ─── */
