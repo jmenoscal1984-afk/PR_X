@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Credenciales correctas, inicializar sesión
             session_regenerate_id(true); // Mitigación Session Fixation/Hijacking
+            $_SESSION['user_logged_in'] = true;
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nombre_completo'];
             $_SESSION['user_avatar'] = $user['avatar'];
@@ -50,19 +51,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmtProfile->execute([':id' => $user['id']]);
                 $profile = $stmtProfile->fetch(PDO::FETCH_ASSOC);
                 
-                $_SESSION['user_role'] = $profile ? $profile['role'] : (($user['rol'] === 'profesor') ? 'teacher' : 'student');
+                $role = $profile ? $profile['role'] : (($user['rol'] === 'profesor') ? 'teacher' : 'student');
+                $_SESSION['user_role'] = $role;
             } catch (PDOException $e) {
-                // Fallback por si la tabla no existe
-                $_SESSION['user_role'] = ($user['rol'] === 'profesor') ? 'teacher' : 'student';
+                // Fallback y log de error
+                error_log("Error PDO consultando public.profiles en login: " . $e->getMessage());
+                $role = ($user['rol'] === 'profesor') ? 'teacher' : 'student';
+                $_SESSION['user_role'] = $role;
             }
             
-            // Redirigir al dashboard unificado
-            header("Location: dashboard.php");
-            exit;
+            // Redirección estricta limpia (usando relativas desde /pages/ para no romper la app en subcarpetas)
+            if ($role === 'teacher') {
+                header("Location: teacher_view.php");
+            } else {
+                header("Location: student_view.php");
+            }
+            exit();
         } else {
             // Credenciales incorrectas
-            header("Location: ../index.php?error=invalid_credentials");
-            exit;
+            header("Location: login.php?error=credenciales_invalidas");
+            exit();
         }
 
     } catch (PDOException $e) {

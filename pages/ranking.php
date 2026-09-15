@@ -58,8 +58,9 @@ $page_title = 'Ranking — EduQuest Bachillerato';
     podiumDiv.innerHTML = `<div class="skeleton" style="width:100%; height:200px; margin: 32px 0;"></div>`;
     listDiv.innerHTML = Array(3).fill(0).map(() => `<div class="skeleton" style="width:100%; height:80px; margin-bottom:12px;"></div>`).join('');
     
-    setTimeout(() => {
+    const fetchAndRenderScores = () => {
       // Obtenemos los datos para ver si hay estado vacío
+      // (Si hay una llamada asíncrona a BD, colócala aquí antes de renderizar)
       const allUsers = EQ_Storage.getAllUsers();
       if (!allUsers || allUsers.length === 0) {
         podiumDiv.innerHTML = '';
@@ -75,7 +76,26 @@ $page_title = 'Ranking — EduQuest Bachillerato';
       
       EQ_Ranking.renderPodium('podium');
       EQ_Ranking.render('ranking-list', user.id);
+    };
+
+    setTimeout(() => {
+      // Carga inicial
+      fetchAndRenderScores();
     }, 600); // Simulando carga de red
+
+    // Suscripción al canal de Realtime de Supabase
+    if (typeof supabase !== 'undefined') {
+      const scoresChannel = supabase
+        .channel('public:scores')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'scores' }, payload => {
+            console.log('Cambio detectado en vivo:', payload);
+            // Función para actualizar el DOM del ranking dinámicamente
+            fetchAndRenderScores();
+        })
+        .subscribe();
+    } else {
+      console.warn("Cliente Supabase no encontrado. Asegúrate de incluir el script de Supabase.");
+    }
   });
 </script>
 

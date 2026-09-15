@@ -37,15 +37,15 @@ require_once '../includes/head.php';
         <input type="hidden" name="csrf_token" value="<?= escape(generate_csrf_token()) ?>">
         
         <!-- Identidad (Avatar) -->
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-3 flex items-center">
-            <i class="fas fa-user-circle mr-2 text-purple-400"></i> Elige tu avatar de héroe
-          </label>
-          <div class="flex flex-wrap justify-center gap-4" id="avatar-selector">
-            <!-- Avatares generados por JS -->
+          <div class="space-y-3 w-full">
+            <label class="block text-sm font-medium text-purple-300 tracking-wide">
+                ⚡ Elige tu avatar de héroe espacial (12 opciones)
+            </label>
+            <div class="grid grid-cols-4 sm:grid-cols-6 gap-3 bg-slate-900/60 p-4 rounded-2xl border border-purple-500/30 backdrop-blur-md max-h-60 overflow-y-auto" id="avatar-selector">
+              <!-- Avatares generados por JS -->
+            </div>
+            <input type="hidden" name="avatar" id="selected_avatar" value="👨‍🎓" required>
           </div>
-          <input type="hidden" name="avatar" id="selected_avatar" value="👨‍🎓" required>
-        </div>
 
         <!-- Campos de Texto -->
         <div class="space-y-5">
@@ -135,14 +135,17 @@ document.addEventListener('DOMContentLoaded', () => {
     { id: 'robot', url: 'https://api.dicebear.com/9.x/bottts/svg?seed=Buster&backgroundColor=0f172a' },
     { id: 'heroe', url: 'https://api.dicebear.com/9.x/adventurer/svg?seed=Hero&backgroundColor=0f172a' },
     { id: 'bruja', url: 'https://api.dicebear.com/9.x/adventurer/svg?seed=Lilith&backgroundColor=0f172a' },
-    { id: 'cyborg', url: 'https://api.dicebear.com/9.x/bottts/svg?seed=Cyborg&backgroundColor=0f172a' }
+    { id: 'cyborg', url: 'https://api.dicebear.com/9.x/bottts/svg?seed=Cyborg&backgroundColor=0f172a' },
+    { id: 'astronauta', url: 'https://api.dicebear.com/9.x/bottts/svg?seed=Astro&backgroundColor=0f172a' },
+    { id: 'explorador', url: 'https://api.dicebear.com/9.x/adventurer/svg?seed=Explorer&backgroundColor=0f172a' },
+    { id: 'cazador', url: 'https://api.dicebear.com/9.x/adventurer/svg?seed=Hunter&backgroundColor=0f172a' },
+    { id: 'droide', url: 'https://api.dicebear.com/9.x/bottts/svg?seed=Droid&backgroundColor=0f172a' },
+    { id: 'capitan', url: 'https://api.dicebear.com/9.x/adventurer/svg?seed=Captain&backgroundColor=0f172a' },
+    { id: 'guardia', url: 'https://api.dicebear.com/9.x/bottts/svg?seed=Guard&backgroundColor=0f172a' }
   ];
   
   const selectorContainer = document.getElementById('avatar-selector');
   const hiddenInput = document.getElementById('selected_avatar');
-
-  // Asegurarnos de que el contenedor tenga un buen diseño grid/flex
-  selectorContainer.className = 'grid grid-cols-3 sm:grid-cols-6 gap-4 justify-items-center';
 
   // Renderizar avatares interactivos
   avatars.forEach((avatar, index) => {

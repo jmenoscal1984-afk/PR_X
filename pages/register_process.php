@@ -1,6 +1,15 @@
 <?php
+ob_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once '../includes/auth_middleware.php';
 require_once '../includes/conexion.php';
+
+function redirectWithError($message) {
+    header("Location: register.php?error=" . urlencode($message));
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 1. Recoger y limpiar datos
@@ -17,25 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validaciones básicas
     if (empty($nombre) || empty($correo) || empty($password)) {
-        die("Error: Todos los campos son obligatorios.");
+        redirectWithError("Todos los campos son obligatorios.");
     }
 
     // Validación CSRF
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
-        die("Error: Token CSRF inválido.");
+        redirectWithError("Token CSRF inválido.");
     }
 
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        die("Error: El formato del correo es inválido.");
+        redirectWithError("El formato del correo es inválido.");
     }
 
     if (strlen($password) < 6) {
-        die("Error: La contraseña debe tener al menos 6 caracteres.");
+        redirectWithError("La contraseña debe tener al menos 6 caracteres.");
     }
     
     if (!in_array($rol, ['alumno', 'profesor'])) {
-        die("Error: Rol inválido.");
+        redirectWithError("Rol inválido.");
     }
 
     try {
@@ -44,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtCheck->execute([':correo' => $correo]);
         
         if ($stmtCheck->fetch()) {
-            die("Error: El correo ya está registrado. Intenta iniciar sesión.");
+            redirectWithError("El correo ya está registrado. Intenta iniciar sesión.");
         }
 
         // 2. Hashear la contraseña
@@ -77,24 +86,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Registro exitoso, inicializar sesión
             session_regenerate_id(true); // Prevenir fixation
+            $_SESSION['user_logged_in'] = true;
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $nombre;
-            $_SESSION['user_avatar'] = $avatar;
             $_SESSION['user_role'] = $role_en;
+            $_SESSION['user_full_name'] = $nombre;
+            $_SESSION['user_avatar'] = $avatar;
             
-            // Redirección al dashboard unificado
-            header("Location: dashboard.php");
-            exit;
+            // Redirección inteligente por rol
+            if ($role_en === 'teacher') {
+                header("Location: /pages/teacher_view.php?onboarding=new");
+            } else {
+                header("Location: /pages/student_view.php?onboarding=new");
+            }
+            exit();
         } else {
-            die("Error al crear la cuenta. Inténtalo más tarde.");
+            redirectWithError("Error al crear la cuenta. Inténtalo más tarde.");
         }
 
     } catch (PDOException $e) {
-        // Manejo de errores temporal para depuración detallada
-        die("<h3>Fallo de PDO detectado en Registro:</h3><p>" . htmlspecialchars($e->getMessage()) . "</p><p>Verifica la estructura de tu tabla 'usuarios' (¿Falta la columna 'password'?).</p>");
+        error_log("Fallo de PDO detectado en Registro: " . $e->getMessage());
+        redirectWithError("Error de base de datos. Por favor, intenta de nuevo.");
     }
 } else {
     header("Location: ../index.php");
-    exit;
+    exit();
 }
 ?>

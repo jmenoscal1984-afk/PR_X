@@ -3,299 +3,344 @@ $require_auth = true;
 $require_teacher = true;
 require_once __DIR__ . '/../includes/auth_middleware.php';
 
-// pages/teacher_view.php
+$page_title = 'Panel Avanzado de Profesor — EduQuest';
+require_once __DIR__ . '/../includes/tailwind_header.php';
 ?>
+
+<!-- Estilos Deep Space Específicos para el Teacher View -->
+<style>
+  body {
+    background-color: #0f172a;
+    background-image: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 100%);
+    color: #f8fafc;
+  }
+  .glass-panel {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+  .tab-btn {
+    transition: all 0.3s ease;
+  }
+  .tab-btn.active {
+    background: rgba(168, 85, 247, 0.2);
+    border-bottom: 2px solid #c084fc;
+    color: #e879f9;
+    box-shadow: inset 0 -4px 10px rgba(168, 85, 247, 0.2);
+  }
+</style>
 
 <script>
 function switchTab(tabId) {
+    // Ocultar todos los contenidos
     document.querySelectorAll('.tab-content').forEach(el => {
         el.classList.add('hidden');
         el.classList.remove('animate-[fadeIn_0.3s_ease-out]');
     });
+    // Quitar clase active de los botones
     document.querySelectorAll('.tab-btn').forEach(el => {
-        el.classList.remove('bg-blue-600/30', 'border-blue-500', 'text-white');
-        el.classList.add('border-transparent', 'text-slate-400');
+        el.classList.remove('active', 'text-purple-300');
+        el.classList.add('text-slate-400', 'border-transparent');
     });
     
+    // Mostrar tab activo
     const content = document.getElementById(tabId);
     content.classList.remove('hidden');
     content.classList.add('animate-[fadeIn_0.3s_ease-out]');
     
+    // Marcar botón activo
     const btn = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
-    btn.classList.add('bg-blue-600/30', 'border-blue-500', 'text-white');
-    btn.classList.remove('border-transparent', 'text-slate-400');
-}
-
-function openModal(modalId) {
-    document.getElementById(modalId).classList.remove('hidden');
-    document.getElementById(modalId).classList.add('flex');
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.add('hidden');
-    document.getElementById(modalId).classList.remove('flex');
+    btn.classList.add('active', 'text-purple-300');
+    btn.classList.remove('text-slate-400', 'border-transparent');
 }
 </script>
 
-<div class="space-y-8 animate-[fadeIn_0.5s_ease-out]">
+<div class="max-w-[1400px] mx-auto p-4 md:p-8 space-y-8 animate-[fadeIn_0.5s_ease-out] relative z-10">
     
-    <!-- Hero Section Profesor -->
-    <div class="glass-panel rounded-3xl p-8 relative overflow-hidden border border-blue-500/30">
-        <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
-        <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-purple-600/20 rounded-full blur-3xl"></div>
+    <!-- Hero Section Profesor Deep Space -->
+    <div class="glass-panel rounded-3xl p-8 relative overflow-hidden border border-purple-500/40 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+        <div class="absolute -right-20 -top-20 w-64 h-64 bg-purple-600/30 rounded-full blur-3xl"></div>
+        <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
         <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-                <h1 class="font-heading text-3xl font-bold text-white mb-2">Panel Docente, <?= htmlspecialchars($userName) ?></h1>
-                <p class="text-slate-400">Gestiona tus aulas, crea contenidos interactivos y evalúa con ayuda de IA.</p>
+                <div class="flex items-center gap-3 text-purple-400 mb-2">
+                    <i class="fas fa-user-astronaut text-3xl"></i>
+                    <h1 class="font-heading text-3xl md:text-4xl font-bold text-white tracking-wide">Comando Central</h1>
+                </div>
+                <p class="text-slate-300 text-lg">Bienvenido de vuelta, <?= htmlspecialchars($_SESSION['user_full_name'] ?? 'Comandante') ?>. Dirige tus flotas de aprendizaje.</p>
             </div>
-            <button onclick="openModal('modal-nueva-aula')" class="min-h-[48px] min-w-[48px] px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-[0_0_15px_rgba(59,130,246,0.4)] transition transform hover:scale-105 flex items-center justify-center gap-2">
-                <i class="fas fa-plus"></i> Crear Nueva Aula
+        </div>
+    </div>
+
+    <!-- NAVEGACIÓN TABBED UI -->
+    <div class="flex flex-wrap gap-2 border-b border-slate-700/50 pb-0">
+        <button onclick="switchTab('tab-monitoreo')" class="tab-btn active text-purple-300 px-6 py-4 rounded-t-xl font-bold text-sm md:text-base flex items-center gap-2 border-b-2">
+            <i class="fas fa-chart-pie"></i> Monitoreo del Curso
+        </button>
+        <button onclick="switchTab('tab-misiones')" class="tab-btn text-slate-400 border-transparent px-6 py-4 rounded-t-xl font-bold text-sm md:text-base flex items-center gap-2 hover:bg-slate-800/50 border-b-2">
+            <i class="fas fa-rocket"></i> Crear Misiones
+        </button>
+        <button onclick="switchTab('tab-quizzes')" class="tab-btn text-slate-400 border-transparent px-6 py-4 rounded-t-xl font-bold text-sm md:text-base flex items-center gap-2 hover:bg-slate-800/50 border-b-2">
+            <i class="fas fa-gamepad"></i> Creador Quizzes
+        </button>
+        <button onclick="switchTab('tab-tareas')" class="tab-btn text-slate-400 border-transparent px-6 py-4 rounded-t-xl font-bold text-sm md:text-base flex items-center gap-2 hover:bg-slate-800/50 border-b-2">
+            <i class="fas fa-calendar-check"></i> Gestión de Tareas
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CONTENIDO DE LAS PESTAÑAS -->
+    <!-- ========================================== -->
+
+    <!-- TAB 1: 📊 Monitoreo del Curso -->
+    <div id="tab-monitoreo" class="tab-content block space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-panel p-6 rounded-2xl flex items-center justify-between border-l-4 border-blue-500 hover:scale-105 transition transform">
+                <div>
+                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Cadetes Activos</p>
+                    <h3 class="text-3xl font-bold text-white mt-1">128</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+            
+            <div class="glass-panel p-6 rounded-2xl flex items-center justify-between border-l-4 border-green-500 hover:scale-105 transition transform">
+                <div>
+                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Misiones Completadas</p>
+                    <h3 class="text-3xl font-bold text-white mt-1">45</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+            
+            <div class="glass-panel p-6 rounded-2xl flex items-center justify-between border-l-4 border-yellow-500 hover:scale-105 transition transform relative overflow-hidden">
+                <div class="absolute inset-0 bg-yellow-500/5 animate-pulse"></div>
+                <div class="relative z-10">
+                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Promedio de Puntos (En Vivo)</p>
+                    <h3 id="live-avg-points" class="text-3xl font-bold text-yellow-400 mt-1">Calculando...</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-xl relative z-10">
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-panel p-6 rounded-2xl">
+            <h3 class="text-xl font-bold text-white mb-4 border-b border-slate-700/50 pb-2">Últimas Actividades (Tiempo Real)</h3>
+            <ul id="live-activity-feed" class="space-y-3">
+                <li class="text-slate-400 text-sm italic">Esperando actualizaciones del escuadrón...</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- TAB 2: 🚀 Crear y Editar Misiones -->
+    <div id="tab-misiones" class="tab-content hidden space-y-6">
+        <div class="glass-panel p-8 rounded-2xl">
+            <h2 class="text-2xl font-bold text-purple-300 mb-6 border-b border-slate-700/50 pb-2 flex items-center gap-2">
+                <i class="fas fa-rocket"></i> Nueva Misión Teórica
+            </h2>
+            <form class="space-y-6" onsubmit="event.preventDefault();">
+                <div>
+                    <label class="block text-slate-300 font-bold mb-2">Título de la Misión</label>
+                    <input type="text" class="w-full bg-slate-900/50 border border-slate-600 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition" placeholder="Ej: Operación: Sistema Solar">
+                </div>
+                <div>
+                    <label class="block text-slate-300 font-bold mb-2">Contenido Teórico</label>
+                    <textarea rows="6" class="w-full bg-slate-900/50 border border-slate-600 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition" placeholder="Redacta la historia y la teoría aquí..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-slate-300 font-bold mb-2">Recursos Multimedia</label>
+                    <div class="w-full border-2 border-dashed border-slate-600 rounded-xl p-8 flex flex-col items-center justify-center text-slate-500 hover:border-purple-500 hover:text-purple-400 transition cursor-pointer bg-slate-900/30">
+                        <i class="fas fa-cloud-upload-alt text-4xl mb-3"></i>
+                        <span class="font-bold">Arrastra imágenes o videos estelares aquí</span>
+                    </div>
+                </div>
+                <button type="button" class="w-full py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white rounded-xl font-bold transition shadow-[0_0_15px_rgba(168,85,247,0.4)] text-lg">
+                    Lanzar Misión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TAB 3: 🎮 Creador Avanzado de Quizzes -->
+    <div id="tab-quizzes" class="tab-content hidden space-y-6">
+        <div class="glass-panel p-8 rounded-2xl">
+            <div class="flex justify-between items-center mb-6 border-b border-slate-700/50 pb-4">
+                <h2 class="text-2xl font-bold text-green-400 flex items-center gap-2">
+                    <i class="fas fa-gamepad"></i> Creador de Desafíos
+                </h2>
+                <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white rounded-lg text-sm font-bold transition flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Nueva Pregunta
+                </button>
+            </div>
+            
+            <!-- Configurador de Pregunta -->
+            <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-6 mb-6 shadow-inner">
+                <div class="flex gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Desafío (Pregunta)</label>
+                        <input type="text" class="w-full bg-slate-800 border border-slate-600 rounded-xl p-3 text-white focus:outline-none focus:border-green-500" placeholder="Ej: ¿Qué planeta es rojo?">
+                    </div>
+                    <div class="w-1/4">
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Puntos</label>
+                        <input type="number" value="10" class="w-full bg-slate-800 border border-slate-600 rounded-xl p-3 text-white text-center focus:outline-none focus:border-green-500">
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Dificultad</label>
+                    <div class="flex gap-2">
+                        <label class="flex-1 text-center py-2 bg-slate-800 border border-slate-600 rounded-lg cursor-pointer hover:border-green-500">
+                            <input type="radio" name="dif" class="hidden"> <span class="text-green-400">Fácil</span>
+                        </label>
+                        <label class="flex-1 text-center py-2 bg-slate-800 border border-slate-600 rounded-lg cursor-pointer hover:border-yellow-500 border-yellow-500">
+                            <input type="radio" name="dif" class="hidden" checked> <span class="text-yellow-400">Medio</span>
+                        </label>
+                        <label class="flex-1 text-center py-2 bg-slate-800 border border-slate-600 rounded-lg cursor-pointer hover:border-red-500">
+                            <input type="radio" name="dif" class="hidden"> <span class="text-red-400">Experto</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Opciones (Marca la correcta)</label>
+                    <div class="space-y-3 pl-4 border-l-2 border-slate-700">
+                        <div class="flex items-center gap-3">
+                            <input type="radio" name="q_correct" checked class="w-6 h-6 accent-green-500 cursor-pointer">
+                            <input type="text" class="w-full bg-slate-800/50 border border-green-500/50 rounded-lg p-2 text-white focus:outline-none" value="Marte">
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="radio" name="q_correct" class="w-6 h-6 accent-green-500 cursor-pointer">
+                            <input type="text" class="w-full bg-slate-800/50 border border-slate-700 rounded-lg p-2 text-slate-300 focus:outline-none" value="Venus">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="button" class="w-full py-4 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold transition shadow-[0_0_15px_rgba(34,197,94,0.4)] text-lg">
+                Guardar Configuración del Juego
             </button>
         </div>
     </div>
 
-    <!-- Navegación por Pestañas (Grandes y accesibles) -->
-    <div class="flex flex-wrap gap-2 border-b border-slate-700/50 pb-2">
-        <button onclick="switchTab('tab-aulas')" class="tab-btn bg-blue-600/30 border-blue-500 text-white border-b-2 min-h-[48px] px-6 py-2 rounded-t-xl font-bold transition hover:bg-blue-600/20 flex items-center gap-2">
-            <i class="fas fa-users"></i> Mis Aulas
-        </button>
-        <button onclick="switchTab('tab-contenidos')" class="tab-btn border-transparent text-slate-400 border-b-2 min-h-[48px] px-6 py-2 rounded-t-xl font-bold transition hover:text-white hover:bg-slate-800/50 flex items-center gap-2">
-            <i class="fas fa-book-open"></i> Contenidos y Tareas
-        </button>
-        <button onclick="switchTab('tab-evaluaciones')" class="tab-btn border-transparent text-slate-400 border-b-2 min-h-[48px] px-6 py-2 rounded-t-xl font-bold transition hover:text-white hover:bg-slate-800/50 flex items-center gap-2">
-            <i class="fas fa-check-double"></i> Evaluaciones y Quizzes
-        </button>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- TABS CONTENT -->
-    <!-- ========================================== -->
-
-    <!-- TAB 1: Mis Aulas -->
-    <div id="tab-aulas" class="tab-content space-y-6 block">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Mock Aula Card 1 -->
-            <div class="glass-panel p-6 rounded-2xl border border-slate-700/50 hover:border-blue-500/50 transition group cursor-pointer relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 bg-blue-500/20 text-blue-400 rounded-xl">
-                            <i class="fas fa-atom text-xl"></i>
-                        </div>
-                        <span class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/30">Activa</span>
-                    </div>
-                    <h3 class="text-xl font-heading font-bold text-white mb-1">Física Cuántica Básica</h3>
-                    <p class="text-sm text-slate-400 mb-4">Introducción a las partículas subatómicas.</p>
-                    <div class="flex justify-between items-center text-sm">
-                        <div class="flex -space-x-2">
-                            <div class="w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-900 flex justify-center items-center text-xs">👨‍🎓</div>
-                            <div class="w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-900 flex justify-center items-center text-xs">👩‍🎓</div>
-                            <div class="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex justify-center items-center text-xs text-slate-400">+24</div>
-                        </div>
-                        <span class="text-blue-400 font-bold group-hover:text-blue-300">Gestionar <i class="fas fa-arrow-right ml-1"></i></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mock Aula Card 2 -->
-            <div class="glass-panel p-6 rounded-2xl border border-slate-700/50 hover:border-purple-500/50 transition group cursor-pointer relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 bg-purple-500/20 text-purple-400 rounded-xl">
-                            <i class="fas fa-globe-americas text-xl"></i>
-                        </div>
-                        <span class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/30">Activa</span>
-                    </div>
-                    <h3 class="text-xl font-heading font-bold text-white mb-1">Historia Universal II</h3>
-                    <p class="text-sm text-slate-400 mb-4">Renacimiento a la era moderna.</p>
-                    <div class="flex justify-between items-center text-sm">
-                        <div class="flex -space-x-2">
-                            <div class="w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-900 flex justify-center items-center text-xs">🥷</div>
-                            <div class="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex justify-center items-center text-xs text-slate-400">+15</div>
-                        </div>
-                        <span class="text-purple-400 font-bold group-hover:text-purple-300">Gestionar <i class="fas fa-arrow-right ml-1"></i></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB 2: Contenidos y Tareas -->
-    <div id="tab-contenidos" class="tab-content hidden space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Formulario Subida -->
-            <div class="lg:col-span-2 glass-panel p-6 rounded-2xl border border-slate-700/50">
-                <h2 class="font-heading text-xl font-bold text-white mb-6 border-b border-slate-700/50 pb-4">Crear Nuevo Material</h2>
-                <form class="space-y-5">
+    <!-- TAB 4: 📅 Gestión de Tareas y Fechas Límite -->
+    <div id="tab-tareas" class="tab-content hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Asignar Tarea -->
+            <div class="glass-panel p-8 rounded-2xl">
+                <h2 class="text-2xl font-bold text-blue-400 mb-6 flex items-center gap-2">
+                    <i class="fas fa-tasks"></i> Asignar Tarea Especial
+                </h2>
+                <form class="space-y-5" onsubmit="event.preventDefault();">
                     <div>
-                        <label class="block text-slate-300 font-bold mb-2">Título de la Lección / Tarea</label>
-                        <input type="text" class="w-full min-h-[48px] bg-slate-900/50 border border-slate-600 rounded-xl px-4 text-white focus:outline-none focus:border-blue-500 transition" placeholder="Ej: Las leyes de Newton">
+                        <label class="block text-slate-300 font-bold mb-2">Título de la Tarea</label>
+                        <input type="text" class="w-full bg-slate-900/50 border border-slate-600 rounded-xl p-3 text-white focus:outline-none focus:border-blue-500" placeholder="Ej: Reporte del Campo Asteroidal">
                     </div>
                     <div>
-                        <label class="block text-slate-300 font-bold mb-2">Descripción o Contenido</label>
-                        <textarea rows="5" class="w-full bg-slate-900/50 border border-slate-600 rounded-xl p-4 text-white focus:outline-none focus:border-blue-500 transition" placeholder="Redacta el contenido..."></textarea>
+                        <label class="block text-slate-300 font-bold mb-2">Descripción</label>
+                        <textarea rows="4" class="w-full bg-slate-900/50 border border-slate-600 rounded-xl p-3 text-white focus:outline-none focus:border-blue-500" placeholder="Instrucciones detalladas..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-slate-300 font-bold mb-2">Archivos Adjuntos (PDF, Videos)</label>
-                        <div class="w-full min-h-[100px] border-2 border-dashed border-slate-600 rounded-xl flex flex-col items-center justify-center text-slate-500 hover:border-blue-500 hover:text-blue-400 transition cursor-pointer bg-slate-900/30">
-                            <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
-                            <span>Arrastra tus archivos aquí o haz clic para subir</span>
-                        </div>
+                        <label class="block text-pink-400 font-bold mb-2"><i class="fas fa-clock"></i> Fecha y Hora Límite (Deadline)</label>
+                        <input type="datetime-local" class="w-full bg-slate-900/50 border border-pink-500/50 rounded-xl p-3 text-white focus:outline-none focus:border-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.2)] custom-datetime" required>
+                        <style>
+                            .custom-datetime::-webkit-calendar-picker-indicator {
+                                filter: invert(1);
+                                cursor: pointer;
+                            }
+                        </style>
                     </div>
-                    <button type="button" class="w-full min-h-[48px] bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold transition shadow-[0_0_15px_rgba(34,197,94,0.3)]">
-                        Publicar Contenido
+                    <button type="button" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition shadow-[0_0_15px_rgba(59,130,246,0.4)] text-lg mt-4">
+                        Desplegar Tarea
                     </button>
                 </form>
             </div>
-            
-            <!-- AI Assistant Sidebar -->
-            <div class="glass-panel p-6 rounded-2xl border border-purple-500/40 relative overflow-hidden bg-gradient-to-b from-purple-900/20 to-transparent">
-                <div class="absolute top-0 right-0 p-4 opacity-20">
-                    <i class="fas fa-robot text-6xl text-purple-400"></i>
-                </div>
-                <h2 class="font-heading text-xl font-bold text-purple-300 mb-4 flex items-center gap-2">
-                    <i class="fas fa-magic"></i> Asistente IA
-                </h2>
-                <p class="text-sm text-slate-300 mb-6 relative z-10">Genera resúmenes, viñetas o simplifica textos complejos automáticamente para tus alumnos.</p>
+
+            <!-- Tareas Activas -->
+            <div class="glass-panel p-8 rounded-2xl">
+                <h2 class="text-xl font-bold text-white mb-6 border-b border-slate-700/50 pb-2">Tareas Activas</h2>
                 
-                <div class="space-y-3 relative z-10">
-                    <button class="w-full min-h-[48px] bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-white rounded-xl text-sm font-bold transition flex items-center gap-3 px-4">
-                        <i class="fas fa-align-left text-purple-300"></i> Resumir texto actual
-                    </button>
-                    <button class="w-full min-h-[48px] bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-white rounded-xl text-sm font-bold transition flex items-center gap-3 px-4">
-                        <i class="fas fa-list-ul text-purple-300"></i> Extraer ideas clave
-                    </button>
-                    <button class="w-full min-h-[48px] bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-white rounded-xl text-sm font-bold transition flex items-center gap-3 px-4">
-                        <i class="fas fa-language text-purple-300"></i> Simplificar vocabulario
-                    </button>
+                <div class="space-y-4">
+                    <div class="bg-slate-900/50 border border-slate-700 rounded-xl p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-white font-bold">Mapeo de Constelaciones</h4>
+                            <span class="px-2 py-1 bg-pink-500/20 text-pink-400 text-xs rounded-md font-bold border border-pink-500/30">Vence: Mañana 23:59</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3">Entregas: 12 / 24</p>
+                        <div class="flex -space-x-2">
+                            <div class="w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-900 flex justify-center items-center text-xs">👩‍🚀</div>
+                            <div class="w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-900 flex justify-center items-center text-xs">👨‍🚀</div>
+                            <div class="w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-900 flex justify-center items-center text-xs">👽</div>
+                            <div class="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex justify-center items-center text-xs text-slate-400">+9</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- TAB 3: Evaluaciones y Quizzes -->
-    <div id="tab-evaluaciones" class="tab-content hidden space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Creador de Quizzes -->
-            <div class="lg:col-span-2 glass-panel p-6 rounded-2xl border border-slate-700/50">
-                <div class="flex justify-between items-center mb-6 border-b border-slate-700/50 pb-4">
-                    <h2 class="font-heading text-xl font-bold text-white">Creador de Evaluaciones</h2>
-                    <button class="min-h-[48px] px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white rounded-xl text-sm font-bold transition flex items-center gap-2">
-                        <i class="fas fa-plus"></i> Añadir Pregunta
-                    </button>
-                </div>
+</div>
+
+<!-- LÓGICA SUPABASE REALTIME (SIMULACIÓN E INTEGRACIÓN) -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Referencias DOM
+    const liveAvgDisplay = document.getElementById('live-avg-points');
+    const activityFeed = document.getElementById('live-activity-feed');
+    
+    // Simulación del promedio inicial
+    let currentTotal = 15400;
+    let studentCount = 128;
+    
+    function updateAvg() {
+        const avg = Math.round(currentTotal / studentCount);
+        liveAvgDisplay.innerText = avg.toLocaleString();
+        
+        // Animación breve al actualizar
+        liveAvgDisplay.classList.add('scale-110', 'text-white');
+        setTimeout(() => liveAvgDisplay.classList.remove('scale-110', 'text-white'), 300);
+    }
+    
+    updateAvg();
+
+    // Integración Supabase Realtime para la tabla 'scores'
+    if (typeof supabase !== 'undefined') {
+        const adminScoresChannel = supabase.channel('teacher_scores_monitor')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'scores' }, payload => {
+                console.log('Actividad detectada (Teacher Monitor):', payload);
                 
-                <!-- Mock Pregunta 1 -->
-                <div class="bg-slate-900/50 border border-slate-700 rounded-xl p-5 mb-4">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="text-blue-400 font-bold">Pregunta 1</span>
-                        <button class="text-red-400 hover:text-red-300 p-2"><i class="fas fa-trash"></i></button>
-                    </div>
-                    <input type="text" class="w-full min-h-[48px] bg-slate-800 border border-slate-600 rounded-xl px-4 text-white mb-4 focus:outline-none focus:border-blue-500" value="¿Cuál es la capital de Francia?">
+                if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+                    // Actualizar promedio
+                    currentTotal += 10; // Ejemplo lógico: sumar puntaje o recalcular
+                    updateAvg();
                     
-                    <div class="space-y-2 pl-4 border-l-2 border-slate-700">
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="q1" class="w-5 h-5 text-blue-500 bg-slate-800 border-slate-600">
-                            <input type="text" class="w-full min-h-[40px] bg-slate-800/50 border border-slate-700 rounded-lg px-3 text-sm text-slate-300 focus:outline-none" value="Madrid">
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="q1" checked class="w-5 h-5 text-blue-500 bg-slate-800 border-slate-600">
-                            <input type="text" class="w-full min-h-[40px] bg-slate-800/50 border border-green-500/50 rounded-lg px-3 text-sm text-white focus:outline-none" value="París">
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="q1" class="w-5 h-5 text-blue-500 bg-slate-800 border-slate-600">
-                            <input type="text" class="w-full min-h-[40px] bg-slate-800/50 border border-slate-700 rounded-lg px-3 text-sm text-slate-300 focus:outline-none" value="Berlín">
-                        </div>
-                    </div>
-                </div>
-                
-                <button type="button" class="w-full min-h-[48px] bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition shadow-[0_0_15px_rgba(59,130,246,0.3)] mt-4">
-                    Guardar Quiz
-                </button>
-            </div>
-            
-            <!-- AI Quiz Generator -->
-            <div class="glass-panel p-6 rounded-2xl border border-orange-500/40 relative overflow-hidden bg-gradient-to-b from-orange-900/20 to-transparent">
-                <div class="absolute top-0 right-0 p-4 opacity-20">
-                    <i class="fas fa-brain text-6xl text-orange-400"></i>
-                </div>
-                <h2 class="font-heading text-xl font-bold text-orange-400 mb-4 flex items-center gap-2">
-                    <i class="fas fa-magic"></i> Auto-Generador IA
-                </h2>
-                <p class="text-sm text-slate-300 mb-6 relative z-10">Genera preguntas de opción múltiple automáticamente basadas en el temario o un texto proporcionado.</p>
-                
-                <div class="space-y-4 relative z-10">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">Tema o Texto Fuente</label>
-                        <textarea rows="3" class="w-full text-sm bg-slate-900/80 border border-orange-500/30 rounded-xl p-3 text-white focus:outline-none focus:border-orange-500" placeholder="Ej: La revolución industrial y sus consecuencias..."></textarea>
-                    </div>
-                    <div class="flex gap-2">
-                        <div class="w-1/2">
-                            <label class="block text-xs font-bold text-slate-400 mb-1">Cantidad</label>
-                            <input type="number" value="5" min="1" max="20" class="w-full min-h-[40px] bg-slate-900/80 border border-orange-500/30 rounded-xl px-3 text-white">
-                        </div>
-                        <div class="w-1/2">
-                            <label class="block text-xs font-bold text-slate-400 mb-1">Dificultad</label>
-                            <select class="w-full min-h-[40px] bg-slate-900/80 border border-orange-500/30 rounded-xl px-2 text-white">
-                                <option>Fácil</option>
-                                <option selected>Media</option>
-                                <option>Difícil</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button class="w-full min-h-[48px] bg-orange-600 hover:bg-orange-500 text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 mt-2 shadow-[0_0_10px_rgba(249,115,22,0.3)]">
-                        <i class="fas fa-cogs"></i> Generar Preguntas
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                    // Añadir feed de actividad
+                    const li = document.createElement('li');
+                    li.className = 'text-sm text-green-400 animate-[fadeIn_0.5s_ease-out] border-l-2 border-green-500 pl-3';
+                    const time = new Date().toLocaleTimeString();
+                    li.innerHTML = `<strong>${time}</strong>: Un cadete acaba de sumar puntos en una misión.`;
+                    
+                    activityFeed.prepend(li);
+                    
+                    // Mantener lista corta
+                    if (activityFeed.children.length > 5) {
+                        activityFeed.lastChild.remove();
+                    }
+                }
+            })
+            .subscribe();
+    } else {
+        console.warn('Supabase no definido. Ejecutando simulador local de monitoreo...');
+        // Simulador visual si no hay DB
+        setInterval(() => {
+            currentTotal += Math.floor(Math.random() * 50);
+            updateAvg();
+        }, 8000);
+    }
+});
+</script>
 
-<!-- ========================================== -->
-<!-- MODALS -->
-<!-- ========================================== -->
-
-<!-- Modal: Nueva Aula -->
-<div id="modal-nueva-aula" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm px-4">
-    <div class="glass-panel w-full max-w-lg rounded-3xl border border-blue-500/40 p-8 shadow-2xl relative overflow-hidden animate-[fadeIn_0.2s_ease-out]">
-        <!-- Deco -->
-        <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-600/20 rounded-full blur-2xl"></div>
-        
-        <div class="flex justify-between items-center mb-6 relative z-10">
-            <h2 class="font-heading text-2xl font-bold text-white">Crear Nueva Aula</h2>
-            <button onclick="closeModal('modal-nueva-aula')" class="text-slate-400 hover:text-white p-2 min-h-[48px] min-w-[48px] flex items-center justify-center transition">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-        </div>
-        
-        <form class="space-y-5 relative z-10" onsubmit="event.preventDefault(); closeModal('modal-nueva-aula'); /* Aquí iría el submit real */">
-            <div>
-                <label class="block text-slate-300 font-bold mb-2">Nombre del Aula</label>
-                <input type="text" required class="w-full min-h-[48px] bg-slate-900/70 border border-slate-600 rounded-xl px-4 text-white focus:outline-none focus:border-blue-500 transition text-lg" placeholder="Ej: Matemáticas Avanzadas 101">
-            </div>
-            <div>
-                <label class="block text-slate-300 font-bold mb-2">Descripción (Opcional)</label>
-                <textarea rows="3" class="w-full bg-slate-900/70 border border-slate-600 rounded-xl p-4 text-white focus:outline-none focus:border-blue-500 transition" placeholder="Breve descripción del curso..."></textarea>
-            </div>
-            <div>
-                <label class="block text-slate-300 font-bold mb-2">Nivel / Grado</label>
-                <select class="w-full min-h-[48px] bg-slate-900/70 border border-slate-600 rounded-xl px-4 text-white focus:outline-none focus:border-blue-500 transition text-lg appearance-none">
-                    <option>Básico</option>
-                    <option>Intermedio</option>
-                    <option>Avanzado</option>
-                </select>
-            </div>
-            
-            <div class="pt-4 border-t border-slate-700/50 flex gap-4">
-                <button type="button" onclick="closeModal('modal-nueva-aula')" class="flex-1 min-h-[48px] bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white rounded-xl font-bold transition">
-                    Cancelar
-                </button>
-                <button type="submit" class="flex-1 min-h-[48px] bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition shadow-[0_0_15px_rgba(59,130,246,0.4)]">
-                    Crear Aula
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+<?php require_once __DIR__ . '/../includes/tailwind_footer.php'; ?>
