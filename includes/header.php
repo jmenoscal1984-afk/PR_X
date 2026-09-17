@@ -165,7 +165,7 @@ $base_dir = $base_dir ?? './';
 
   <!-- ── NAVBAR ── -->
   <div class="landing-nav-wrapper">
-    <nav class="landing-nav" id="landing-nav">
+    <nav x-data class="landing-nav" id="landing-nav">
       <!-- Enlace fluido de retorno al inicio con el nuevo Logo -->
       <a href="<?= htmlspecialchars($base_dir) ?>index.php" class="flex items-center gap-3 text-white no-underline group">
         <!-- Logo SVG Minimalista (Círculo, X y Órbita con Estrella) -->
@@ -199,10 +199,10 @@ $base_dir = $base_dir ?? './';
             Mi Dashboard 🚀
           </a>
         <?php else: ?>
-          <a href="#" onclick="openLoginModal(event)" class="nav-btn nav-btn-ghost">
+          <a href="#" @click.prevent="$dispatch('abrir-login')" class="nav-btn nav-btn-ghost">
             Iniciar Sesión
           </a>
-          <a href="#" onclick="openRegisterModal(event)" class="nav-btn nav-btn-primary">
+          <a href="#" @click.prevent="$dispatch('abrir-registro')" class="nav-btn nav-btn-primary">
             Registrarse 🚀
           </a>
         <?php endif; ?>

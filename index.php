@@ -1064,6 +1064,7 @@ if (empty($subjects)) {
 
   <!-- ── MODAL DE LOGIN CON ALPINE.JS ── -->
   <div x-data="{ 
+         show: false,
          showPassword: false,
          errorMessage: '',
          isLoading: false,
@@ -1085,8 +1086,9 @@ if (empty($subjects)) {
            this.isLoading = false;
          }
        }" 
+       @abrir-login.window="show = true"
        class="relative z-50">
-    <div x-show="openLogin" style="display: none;"
+    <div x-show="show" style="display: none;"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 backdrop-blur-none"
          x-transition:enter-end="opacity-100 backdrop-blur-md"
@@ -1095,8 +1097,8 @@ if (empty($subjects)) {
          x-transition:leave-end="opacity-0 backdrop-blur-none"
          class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
       
-      <div @click.away="openLogin = false" 
-           x-show="openLogin"
+      <div @click.away="show = false" 
+           x-show="show"
            x-transition:enter="transition ease-out duration-300 transform"
            x-transition:enter-start="opacity-0 translate-y-8 scale-95"
            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -1105,7 +1107,7 @@ if (empty($subjects)) {
            x-transition:leave-end="opacity-0 translate-y-8 scale-95"
            class="relative w-full max-w-md bg-gray-900/80 border border-purple-500/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(124,58,237,0.2)] max-h-[95vh] overflow-y-auto">
         
-        <button type="button" @click="openLogin = false" class="absolute top-5 right-5 text-gray-400 hover:text-white text-2xl transition-colors">
+        <button type="button" @click="show = false" class="absolute top-5 right-5 text-gray-400 hover:text-white text-2xl transition-colors">
           <i class="fas fa-times"></i>
         </button>
 
@@ -1183,7 +1185,7 @@ if (empty($subjects)) {
         
         <div class="mt-6 text-center text-sm text-gray-400">
           <span>¿Aún no eres miembro? </span>
-          <a href="#" @click.prevent="openLogin = false; setTimeout(() => openRegister = true, 300)" class="text-purple-400 hover:text-purple-300 font-bold">Únete a la Élite</a>
+          <a href="#" @click.prevent="show = false; setTimeout(() => $dispatch('abrir-registro'), 300)" class="text-purple-400 hover:text-purple-300 font-bold">Únete a la Élite</a>
         </div>
       </div>
     </div>
@@ -1191,6 +1193,7 @@ if (empty($subjects)) {
 
   <!-- ── MODAL DE REGISTRO CON ALPINE.JS ── -->
   <div x-data="{ 
+         show: false,
          selectedRole: 'alumno',
          selectedAvatar: '👨‍🎓', 
          avatars: ['👨‍🎓', '👩‍🎓', '🧙‍♂️', '🥷', '🦸‍♀️', '🤖'],
@@ -1238,9 +1241,10 @@ if (empty($subjects)) {
            this.isLoading = false;
          }
        }" 
+       @abrir-registro.window="show = true"
        class="relative z-50">
     
-    <div x-show="openRegister" style="display: none;"
+    <div x-show="show" style="display: none;"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 backdrop-blur-none"
          x-transition:enter-end="opacity-100 backdrop-blur-md"
@@ -1249,8 +1253,8 @@ if (empty($subjects)) {
          x-transition:leave-end="opacity-0 backdrop-blur-none"
          class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
       
-      <div @click.away="openRegister = false" 
-           x-show="openRegister"
+      <div @click.away="show = false" 
+           x-show="show"
            x-transition:enter="transition ease-out duration-300 transform"
            x-transition:enter-start="opacity-0 translate-y-8 scale-95"
            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -1259,7 +1263,7 @@ if (empty($subjects)) {
            x-transition:leave-end="opacity-0 translate-y-8 scale-95"
            class="relative w-full max-w-lg bg-gray-900/80 border border-purple-500/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(124,58,237,0.2)] max-h-[95vh] overflow-y-auto">
         
-        <button type="button" @click="openRegister = false" class="absolute top-5 right-5 text-gray-400 hover:text-white text-2xl transition-colors">
+        <button type="button" @click="show = false" class="absolute top-5 right-5 text-gray-400 hover:text-white text-2xl transition-colors">
           <i class="fas fa-times"></i>
         </button>
 
@@ -1358,7 +1362,7 @@ if (empty($subjects)) {
         
         <div class="mt-6 text-center text-sm text-gray-400">
           <span>¿Ya tienes cuenta? </span>
-          <a href="#" @click.prevent="openRegister = false; setTimeout(() => openLogin = true, 300)" class="text-blue-400 hover:text-blue-300 font-bold">Inicia sesión aquí</a>
+          <a href="#" @click.prevent="show = false; setTimeout(() => $dispatch('abrir-login'), 300)" class="text-blue-400 hover:text-blue-300 font-bold">Inicia sesión aquí</a>
         </div>
       </div>
     </div>
