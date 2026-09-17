@@ -59,46 +59,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 2. Hashear la contraseña
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        // 3. Insertar usuario en la base de datos (Supabase - PostgreSQL)
+        // 3. Insertar usuario en la base de datos (MySQL)
         $sql = "INSERT INTO usuarios (rol, nombre_completo, correo, password, avatar) 
-                VALUES (:rol, :nombre, :correo, :password, :avatar) RETURNING id";
+                VALUES (:rol, :nombre, :correo, :password, :avatar)";
         
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([
+        if ($stmt->execute([
             ':rol'      => $rol,
             ':nombre'   => $nombre,
             ':correo'   => $correo,
             ':password' => $hashed_password,
             ':avatar'   => $avatar
-        ]);
-
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && isset($user['id'])) {
-            // Sincronizar con public.profiles
-            $role_en = ($rol === 'profesor') ? 'teacher' : 'student';
-            try {
-                $stmtProfile = $pdo->prepare("INSERT INTO public.profiles (id, full_name, role) VALUES (?, ?, ?)");
-                $stmtProfile->execute([$user['id'], $nombre, $role_en]);
-            } catch (PDOException $e) {
-                error_log("Aviso: No se pudo insertar en public.profiles - " . $e->getMessage());
-            }
-
-            // Registro exitoso, inicializar sesión
-            session_regenerate_id(true); // Prevenir fixation
-            $_SESSION['user_logged_in'] = true;
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_role'] = $role_en;
-            $_SESSION['user_full_name'] = $nombre;
-            $_SESSION['user_avatar'] = $avatar;
-            
-            // Redirección inteligente por rol
-            if ($role_en === 'teacher') {
-                header("Location: /pages/teacher_view.php?onboarding=new");
-            } else {
-                header("Location: /pages/student_view.php?onboarding=new");
-            }
-            exit();
+        ])) {
+            session_start();
+            $_SESSION['usuario_id'] = $pdo->lastInsertId();
+            $_SESSION['usuario_nombre'] = $nombre;
+            $_SESSION['usuario_rol'] = $rol;
+            header("Location: dashboard.php");
+            exit;
         } else {
             redirectWithError("Error al crear la cuenta. Inténtalo más tarde.");
         }
