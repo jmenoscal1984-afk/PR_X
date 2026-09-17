@@ -1074,11 +1074,17 @@ if (empty($subjects)) {
            const formData = new FormData(e.target);
            try {
              const res = await fetch('pages/login.php', { method: 'POST', body: formData });
-             const json = await res.json();
-             if (json.success) {
-               window.location.href = 'pages/dashboard.php';
-             } else {
-               this.errorMessage = json.message;
+             const text = await res.text();
+             try {
+               const json = JSON.parse(text);
+               if (json.success) {
+                 window.location.href = 'pages/dashboard.php';
+               } else {
+                 this.errorMessage = json.message;
+               }
+             } catch(parseErr) {
+               console.error("Error del servidor (no es JSON válido):", text);
+               this.errorMessage = 'Error del servidor. Presiona F12 y revisa la Consola para ver el motivo exacto.';
              }
            } catch(err) {
              this.errorMessage = 'Error de red. Verifica tu conexión.';
@@ -1229,11 +1235,17 @@ if (empty($subjects)) {
            const formData = new FormData(e.target);
            try {
              const res = await fetch('pages/register_process.php', { method: 'POST', body: formData });
-             const json = await res.json();
-             if (json.success) {
-               window.location.href = 'pages/dashboard.php';
-             } else {
-               this.errorMessage = json.message;
+             const text = await res.text();
+             try {
+               const json = JSON.parse(text);
+               if (json.success) {
+                 window.location.href = 'pages/dashboard.php';
+               } else {
+                 this.errorMessage = json.message;
+               }
+             } catch (parseErr) {
+               console.error("Error del servidor (no es JSON válido):", text);
+               this.errorMessage = 'Error del servidor. Presiona F12 y revisa la Consola para ver el motivo exacto.';
              }
            } catch(err) {
              this.errorMessage = 'Error de red. Verifica tu conexión.';

@@ -25,9 +25,15 @@ try {
         if (empty($avatar)) $avatar = '👨‍🎓';
     }
 
-    if (empty($nombre) || empty($correo) || empty($password) || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        ob_end_clean();
+    if (empty($nombre) || empty($correo) || empty($password)) {
+        ob_clean();
         echo json_encode(['success' => false, 'message' => 'Correo inválido o datos incompletos.']);
+        exit;
+    }
+
+    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+        ob_clean();
+        echo json_encode(['success' => false, 'message' => 'El formato del correo es inválido (ej. falta .com).']);
         exit;
     }
 
@@ -48,7 +54,7 @@ try {
     $stmtCheck->execute([':correo' => $correo]);
     
     if ($stmtCheck->fetch()) {
-        ob_end_clean();
+        ob_clean();
         echo json_encode(['success' => false, 'message' => 'Este correo ya está registrado.']);
         exit;
     }
@@ -78,7 +84,7 @@ try {
             $stmtProfile->execute([$new_user_id, $nombre, $role_en]);
         } catch (Exception $e) {}
 
-        ob_end_clean();
+        ob_clean();
         echo json_encode(['success' => true]);
         exit;
     } else {
@@ -86,7 +92,7 @@ try {
     }
 
 } catch (Exception $e) {
-    ob_end_clean();
+    ob_clean();
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     exit;
 }

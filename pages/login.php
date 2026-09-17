@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (isset($_SESSION['usuario_id'])) {
-    ob_end_clean();
+    ob_clean();
     echo json_encode(['success' => true]);
     exit;
 }
@@ -40,14 +40,14 @@ try {
         $_SESSION['usuario_nombre'] = $usuario['nombre_completo'];
         $_SESSION['usuario_rol'] = $usuario['rol'];
         
-        ob_end_clean();
+        ob_clean();
         echo json_encode(['success' => true]);
         exit; 
     } else {
         throw new Exception('Credenciales inválidas. Verifica tu correo y contraseña.');
     }
 } catch (Exception $e) {
-    ob_end_clean();
+    ob_clean();
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     exit;
 }
