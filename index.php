@@ -1063,7 +1063,29 @@ if (empty($subjects)) {
   </section>
 
   <!-- ── MODAL DE LOGIN CON ALPINE.JS ── -->
-  <div x-data="{ loginOpen: false, showPassword: false }" 
+  <div x-data="{ 
+         loginOpen: false, 
+         showPassword: false,
+         errorMessage: '',
+         isLoading: false,
+         async submitLogin(e) {
+           this.isLoading = true;
+           this.errorMessage = '';
+           const formData = new FormData(e.target);
+           try {
+             const res = await fetch('pages/login.php', { method: 'POST', body: formData });
+             const json = await res.json();
+             if (json.success) {
+               window.location.href = json.redirect;
+             } else {
+               this.errorMessage = json.message;
+             }
+           } catch(err) {
+             this.errorMessage = 'Error de red. Verifica tu conexión.';
+           }
+           this.isLoading = false;
+         }
+       }" 
        @open-login.window="loginOpen = true"
        @close-login.window="loginOpen = false"
        class="relative z-[2000]">
@@ -1103,20 +1125,17 @@ if (empty($subjects)) {
           <p class="text-gray-400 text-sm mt-1">Ingresa tus credenciales para continuar tu misión.</p>
         </div>
 
-        <?php if (!empty($login_error)): ?>
-        <div class="bg-red-500/20 border border-red-500/50 rounded-xl p-4 mb-6 flex items-start gap-3 text-left">
-          <i class="fas fa-exclamation-circle text-red-400 text-xl mt-0.5"></i>
-          <div>
-            <h4 class="text-red-300 font-bold text-sm">Error de Autenticación</h4>
-            <p class="text-red-200/80 text-xs mt-1"><?= $login_error ?></p>
-            <?php if ($login_error === 'Credenciales incorrectas o el usuario no existe.'): ?>
-            <p class="text-purple-300 text-xs mt-2 font-medium"><i class="fas fa-info-circle"></i> Tip: Puedes usar <b>admin@prx.com</b> con clave <b>admin123</b> (se creará automáticamente si no existe).</p>
-            <?php endif; ?>
+        <template x-if="errorMessage">
+          <div class="bg-red-500/20 border border-red-500/50 rounded-xl p-4 mb-6 flex items-start gap-3 text-left">
+            <i class="fas fa-exclamation-circle text-red-400 text-xl mt-0.5"></i>
+            <div>
+              <h4 class="text-red-300 font-bold text-sm">Error de Autenticación</h4>
+              <p class="text-red-200/80 text-xs mt-1" x-text="errorMessage"></p>
+            </div>
           </div>
-        </div>
-        <?php endif; ?>
+        </template>
 
-        <form action="pages/login_process.php" method="POST" class="space-y-4">
+        <form @submit.prevent="submitLogin" class="space-y-4">
           <input type="hidden" name="csrf_token" value="<?= escape(generate_csrf_token()) ?>">
           
           <div class="relative">
@@ -1146,8 +1165,22 @@ if (empty($subjects)) {
             <a href="#" class="text-purple-400 hover:text-purple-300 font-bold">¿Olvidaste tu clave?</a>
           </div>
 
-          <button type="submit" class="w-full py-3.5 mt-2 text-white font-bold rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transform hover:-translate-y-1 transition-all duration-300">
-            Iniciar Misión
+          <!-- Botón Google -->
+          <div class="mt-4">
+            <button type="button" class="w-full flex items-center justify-center py-3 px-4 border border-gray-700 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-sm font-medium text-white transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900">
+              <svg class="h-5 w-5 mr-3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Iniciar sesión con Google
+            </button>
+          </div>
+
+          <button type="submit" :disabled="isLoading" class="w-full py-3.5 mt-4 text-white font-bold rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span x-show="!isLoading">Iniciar Misión</span>
+            <span x-show="isLoading"><i class="fas fa-spinner fa-spin"></i> Cargando...</span>
           </button>
         </form>
         
@@ -1169,6 +1202,8 @@ if (empty($subjects)) {
          confirmPassword: '',
          showPassword: false,
          showConfirmPassword: false,
+         errorMessage: '',
+         isLoading: false,
          get passwordStrength() {
            let score = 0;
            if(this.password.length > 5) score++;
@@ -1184,6 +1219,27 @@ if (empty($subjects)) {
          },
          get strengthWidth() {
            return (this.passwordStrength * 20) + '%';
+         },
+         async submitRegister(e) {
+           if(this.password !== this.confirmPassword) {
+             this.errorMessage = 'Las contraseñas no coinciden.';
+             return;
+           }
+           this.isLoading = true;
+           this.errorMessage = '';
+           const formData = new FormData(e.target);
+           try {
+             const res = await fetch('pages/register_process.php', { method: 'POST', body: formData });
+             const json = await res.json();
+             if (json.success) {
+               window.location.href = json.redirect;
+             } else {
+               this.errorMessage = json.message;
+             }
+           } catch(err) {
+             this.errorMessage = 'Error de red. Verifica tu conexión.';
+           }
+           this.isLoading = false;
          }
        }" 
        @open-register.window="registerOpen = true"
@@ -1226,7 +1282,17 @@ if (empty($subjects)) {
           <p class="text-gray-400 text-sm mt-1">Selecciona tu perfil y comienza la aventura.</p>
         </div>
 
-        <form action="pages/register_process.php" method="POST" class="space-y-4" @submit="if(password !== confirmPassword) { $event.preventDefault(); alert('Las contraseñas no coinciden.'); }">
+        <template x-if="errorMessage">
+          <div class="bg-red-500/20 border border-red-500/50 rounded-xl p-4 mb-6 flex items-start gap-3 text-left">
+            <i class="fas fa-exclamation-circle text-red-400 text-xl mt-0.5"></i>
+            <div>
+              <h4 class="text-red-300 font-bold text-sm">Error de Registro</h4>
+              <p class="text-red-200/80 text-xs mt-1" x-text="errorMessage"></p>
+            </div>
+          </div>
+        </template>
+
+        <form @submit.prevent="submitRegister" class="space-y-4">
           <input type="hidden" name="csrf_token" value="<?= escape(generate_csrf_token()) ?>">
           
           <!-- Role Selector -->
@@ -1290,8 +1356,9 @@ if (empty($subjects)) {
             </div>
           </div>
 
-          <button type="submit" class="w-full py-3.5 mt-2 text-white font-bold rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transform hover:-translate-y-1 transition-all duration-300">
-            Registrarme Ahora
+          <button type="submit" :disabled="isLoading" class="w-full py-3.5 mt-2 text-white font-bold rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span x-show="!isLoading">Registrarme Ahora</span>
+            <span x-show="isLoading"><i class="fas fa-spinner fa-spin"></i> Procesando...</span>
           </button>
         </form>
         

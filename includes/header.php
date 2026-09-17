@@ -199,10 +199,10 @@ $base_dir = $base_dir ?? './';
             Mi Dashboard 🚀
           </a>
         <?php else: ?>
-          <a href="<?= htmlspecialchars($base_dir) ?>pages/login.php" class="nav-btn nav-btn-ghost">
+          <a href="#" onclick="openLoginModal(event)" class="nav-btn nav-btn-ghost">
             Iniciar Sesión
           </a>
-          <a href="<?= htmlspecialchars($base_dir) ?>pages/register.php" class="nav-btn nav-btn-primary">
+          <a href="#" onclick="openRegisterModal(event)" class="nav-btn nav-btn-primary">
             Registrarse 🚀
           </a>
         <?php endif; ?>

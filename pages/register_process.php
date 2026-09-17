@@ -1,13 +1,20 @@
 <?php
+// pages/register_process.php
+header('Content-Type: application/json');
 ob_start();
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once '../includes/auth_middleware.php';
-require_once '../includes/conexion.php';
+require_once '../includes/db_connect.php';
 
-function redirectWithError($message) {
-    header("Location: register.php?error=" . urlencode($message));
+function sendJsonResponse($success, $message, $redirect = null) {
+    ob_clean(); // Limpiar cualquier output indeseado antes del JSON
+    $response = ['success' => $success, 'message' => $message];
+    if ($redirect) {
+        $response['redirect'] = $redirect;
+    }
+    echo json_encode($response);
     exit();
 }
 
@@ -16,47 +23,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre   = trim(filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_STRING));
     $correo   = trim(filter_input(INPUT_POST, 'correo', FILTER_SANITIZE_EMAIL));
     $password = $_POST['password'] ?? '';
-    $rol      = $_POST['rol'] ?? 'alumno'; // Valor por defecto
+    $rol      = $_POST['rol'] ?? 'alumno'; 
     
-    // Si es profesor no requiere avatar en el mismo formato, o se asigna por defecto
     $avatar = '👨‍🏫';
     if ($rol === 'alumno') {
         $avatar = trim(filter_input(INPUT_POST, 'avatar', FILTER_SANITIZE_STRING));
+        if (empty($avatar)) $avatar = '👨‍🎓';
     }
 
-    // Validaciones básicas
     if (empty($nombre) || empty($correo) || empty($password)) {
-        redirectWithError("Todos los campos son obligatorios.");
+        sendJsonResponse(false, "Todos los campos son obligatorios.");
     }
 
-    // Validación CSRF
+    // Validación CSRF - Omitimos el redirect, devolvemos JSON
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
-        redirectWithError("Token CSRF inválido.");
+        sendJsonResponse(false, "Token de seguridad inválido. Recarga la página.");
     }
 
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        redirectWithError("El formato del correo es inválido.");
+        sendJsonResponse(false, "El formato del correo es inválido.");
     }
 
     if (strlen($password) < 6) {
-        redirectWithError("La contraseña debe tener al menos 6 caracteres.");
+        sendJsonResponse(false, "La contraseña debe tener al menos 6 caracteres.");
     }
     
     if (!in_array($rol, ['alumno', 'profesor'])) {
-        redirectWithError("Rol inválido.");
+        sendJsonResponse(false, "Rol inválido.");
     }
 
     try {
-        // Verificar si el correo ya existe
         $stmtCheck = $pdo->prepare("SELECT id FROM usuarios WHERE correo = :correo LIMIT 1");
         $stmtCheck->execute([':correo' => $correo]);
         
         if ($stmtCheck->fetch()) {
-            redirectWithError("El correo ya está registrado. Intenta iniciar sesión.");
+            sendJsonResponse(false, "El correo ya está registrado. Intenta iniciar sesión.");
         }
 
-        // 2. Hashear la contraseña
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         // 3. Insertar usuario en la base de datos (MySQL)
@@ -71,22 +75,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':password' => $hashed_password,
             ':avatar'   => $avatar
         ])) {
+            $new_user_id = $pdo->lastInsertId();
+            
+            // Inicializar sesión MySQL
             session_start();
-            $_SESSION['usuario_id'] = $pdo->lastInsertId();
+            $_SESSION['usuario_id'] = $new_user_id;
             $_SESSION['usuario_nombre'] = $nombre;
             $_SESSION['usuario_rol'] = $rol;
-            header("Location: dashboard.php");
-            exit;
+            
+            // Sincronizar con public.profiles legacy si existiera el intento (opcional)
+            $role_en = ($rol === 'profesor') ? 'teacher' : 'student';
+            try {
+                $stmtProfile = $pdo->prepare("INSERT INTO public.profiles (id, full_name, role) VALUES (?, ?, ?)");
+                $stmtProfile->execute([$new_user_id, $nombre, $role_en]);
+            } catch (Exception $e) {}
+
+            sendJsonResponse(true, "Cuenta creada con éxito", "pages/dashboard.php");
         } else {
-            redirectWithError("Error al crear la cuenta. Inténtalo más tarde.");
+            sendJsonResponse(false, "Error al crear la cuenta. Inténtalo más tarde.");
         }
 
     } catch (PDOException $e) {
         error_log("Fallo de PDO detectado en Registro: " . $e->getMessage());
-        redirectWithError("Error de base de datos. Por favor, intenta de nuevo.");
+        sendJsonResponse(false, "Error de base de datos. Por favor, intenta de nuevo.");
     }
 } else {
-    header("Location: ../index.php");
-    exit();
+    sendJsonResponse(false, "Método no permitido.");
 }
 ?>
