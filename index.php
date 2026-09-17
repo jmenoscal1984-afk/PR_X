@@ -118,24 +118,30 @@ $extra_head = <<<HTML
   
   /* Tarjetas Estilo Premium */
   .feature-card {
-    background: var(--card-bg);
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(12px);
     border-radius: 24px;
     padding: 40px 32px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    outline: none;
+  }
+  .feature-card:focus-visible {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5);
   }
   .feature-card:hover { 
-    transform: translateY(-5px); 
-    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1); 
+    transform: scale(1.02); 
+    box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2), 0 0 20px rgba(59, 130, 246, 0.3); 
     border-color: rgba(255,255,255,0.2);
   }
   
-  .feature-icon { font-size: 3rem; margin-bottom: 20px; display: block; color: var(--text-primary); }
-  .feature-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: #ffffff; }
-  .feature-desc { font-size: 0.9rem; color: #cbd5e1; line-height: 1.6; }
+  .feature-icon { font-size: 3rem; margin-bottom: 20px; display: block; color: var(--text-primary); transition: transform 0.3s ease; }
+  .feature-card:hover .feature-icon { transform: scale(1.1); }
+  .feature-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; color: #ffffff; }
+  .feature-desc { font-size: 1rem; color: #cbd5e1; line-height: 1.7; }
 
   .subjects-section { background: #0F172A; }
   .section-header { text-align: center; margin-bottom: 16px; position: relative; z-index: 1; }
@@ -252,18 +258,22 @@ $extra_head = <<<HTML
     gap: 8px;
     padding: 14px 28px;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 600;
     font-family: var(--font-body);
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    outline: none;
   }
-  .btn-xl { padding: 16px 36px; font-size: 1.1rem; }
-  .btn-primary { background: var(--accent-blue); color: #fff; border: none; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3); }
-  .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4); }
-  .btn-ghost { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.15); }
-  .btn-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+  .btn:focus-visible {
+    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.6) !important;
+  }
+  .btn-xl { padding: 16px 36px; font-size: 1.15rem; }
+  .btn-primary { background: var(--accent-blue); color: #fff; border: none; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); }
+  .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4); }
+  .btn-ghost { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.15); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1); }
   
   /* Hero Section Restaurada */
   .hero {
@@ -785,10 +795,10 @@ if (empty($features)) {
 
 if (empty($subjects)) {
     $subjects = [
-        ['name' => 'Juegos de Trivia', 'icon' => '🎲'],
-        ['name' => 'Historia Universal', 'icon' => '🏛️'],
-        ['name' => 'Cultura Nacional', 'icon' => '🗺️'],
-        ['name' => 'Cuestionarios', 'icon' => '📝'],
+        ['name' => 'Juegos de Trivia', 'icon' => 'fas fa-gamepad text-purple-400', 'glow' => 'rgba(168, 85, 247, 0.5)'],
+        ['name' => 'Historia Universal', 'icon' => 'fas fa-globe-americas text-blue-400', 'glow' => 'rgba(59, 130, 246, 0.5)'],
+        ['name' => 'Cultura Nacional', 'icon' => 'fas fa-landmark text-yellow-400', 'glow' => 'rgba(250, 204, 21, 0.5)'],
+        ['name' => 'Cuestionarios', 'icon' => 'fas fa-file-alt text-green-400', 'glow' => 'rgba(74, 222, 128, 0.5)'],
     ];
 }
 ?>
@@ -990,13 +1000,13 @@ if (empty($subjects)) {
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
         <?php foreach ($features as $index => $feature): ?>
-        <div class="bg-gray-900/60 backdrop-blur-xl border border-gray-700/50 rounded-3xl p-8 transition-all duration-300 hover:bg-gray-800/80 hover:shadow-[0_10px_40px_rgba(59,130,246,0.2)] hover:-translate-y-2 group w-full">
-          <div class="text-5xl mb-6 transform transition-transform group-hover:scale-110 group-hover:rotate-6 animate-float" style="animation-delay: <?= $index * 0.5 ?>s;">
+        <a href="#" class="bg-[rgba(30,41,59,0.6)] backdrop-blur-xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 transition-all duration-300 hover:bg-[rgba(30,41,59,0.8)] hover:shadow-[0_15px_30px_rgba(59,130,246,0.2),_0_0_20px_rgba(59,130,246,0.3)] hover:border-[rgba(255,255,255,0.2)] hover:scale-[1.02] group w-full block focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-400">
+          <div class="text-5xl mb-6 transform transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-2 animate-float drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" style="animation-delay: <?= $index * 0.5 ?>s;">
             <?= $feature['icon'] ?>
           </div>
           <h3 class="text-xl font-bold text-white mb-3"><?= htmlspecialchars($feature['title']) ?></h3>
-          <p class="text-gray-400 text-sm leading-relaxed"><?= htmlspecialchars($feature['desc']) ?></p>
-        </div>
+          <p class="text-gray-300 text-[1rem] leading-[1.7]"><?= htmlspecialchars($feature['desc']) ?></p>
+        </a>
         <?php endforeach; ?>
       </div>
     </div>
@@ -1011,12 +1021,19 @@ if (empty($subjects)) {
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         <?php foreach ($subjects as $index => $subject): ?>
-        <div class="bg-gray-900/60 backdrop-blur-xl border border-gray-700/50 rounded-3xl p-8 text-center transition-all duration-300 hover:shadow-[0_10px_40px_rgba(236,72,153,0.2)] hover:border-pink-500/50 hover:-translate-y-2 cursor-pointer group w-full">
-          <div class="text-5xl mb-4 transform transition-transform group-hover:scale-125 animate-float" style="animation-delay: <?= $index * 0.3 ?>s;">
-            <?= $subject['icon'] ?>
+        <a href="#" class="bg-[rgba(15,23,42,0.6)] backdrop-blur-xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 text-center transition-all duration-300 hover:shadow-[0_15px_30px_rgba(0,0,0,0.5),_0_0_25px_<?= $subject['glow'] ?? 'rgba(236,72,153,0.3)' ?>] hover:border-[rgba(255,255,255,0.2)] hover:scale-[1.02] cursor-pointer group w-full flex flex-col items-center justify-center focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-400 block">
+          <div class="text-5xl mb-6 transform transition-all duration-300 group-hover:scale-125 group-hover:-translate-y-2 animate-float drop-shadow-[0_0_15px_<?= $subject['glow'] ?? 'rgba(236,72,153,0.5)' ?>]" style="animation-delay: <?= $index * 0.3 ?>s;">
+            <?php if (strpos($subject['icon'], 'fa') !== false): ?>
+              <i class="<?= $subject['icon'] ?>"></i>
+            <?php else: ?>
+              <?= $subject['icon'] ?>
+            <?php endif; ?>
           </div>
-          <div class="text-lg font-bold text-white group-hover:text-pink-300 transition-colors"><?= htmlspecialchars($subject['name']) ?></div>
-        </div>
+          <div class="text-[1.1rem] font-bold text-white group-hover:text-white transition-colors tracking-wide leading-snug"><?= htmlspecialchars($subject['name']) ?></div>
+          <div class="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm font-semibold tracking-wider uppercase text-gray-400">
+            Explorar <i class="fas fa-arrow-right ml-1"></i>
+          </div>
+        </a>
         <?php endforeach; ?>
       </div>
     </div>

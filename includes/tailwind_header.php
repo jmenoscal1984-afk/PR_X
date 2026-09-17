@@ -97,7 +97,7 @@ $page_title = $page_title ?? 'PRX Academy';
         .font-subheading { font-family: 'Outfit', sans-serif; font-weight: 500; letter-spacing: -0.01em; }
         
         /* Elevation & Glassmorphism */
-        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-color); }
+        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
         .elevation-1 { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
         .elevation-2 { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
         .elevation-3 { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2), 0 10px 10px -5px rgba(0,0,0,0.1); }
@@ -105,9 +105,10 @@ $page_title = $page_title ?? 'PRX Academy';
         [x-cloak] { display: none !important; }
         
         /* Micro-interactions & Polish */
-        a, button, .card, .glass-card, .mode-btn, .avatar-chip { transition: all 0.3s ease-in-out !important; }
-        .card:hover, .glass-panel:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.4), 0 0 20px rgba(168,85,247,0.15); transform: translateY(-2px); }
-        aside a.group:hover, aside button.group:hover { transform: translateX(4px); }
+        a, button, .card, .glass-card, .mode-btn, .avatar-chip, .btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; }
+        .card:hover, .glass-panel:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 25px rgba(168,85,247,0.3); transform: translateY(-4px); }
+        button:hover:not(.tab-btn), .btn:hover { box-shadow: 0 0 20px rgba(168,85,247,0.4); transform: translateY(-2px); }
+        aside a.group:hover, aside button.group:hover { transform: translateX(4px); box-shadow: none; }
         
         /* Skeleton Loaders (Shimmer) */
         @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
@@ -146,7 +147,7 @@ $page_title = $page_title ?? 'PRX Academy';
         @keyframes moveBg { 0% { background-position: 0 0; } 100% { background-position: 100px 100px; } }
         
         /* Real Starfield Effect */
-        .starfield-container { position: absolute; inset: 0; overflow: hidden; }
+        .starfield-container { position: absolute; inset: 0; overflow: hidden; opacity: 0.4; pointer-events: none; }
         .starfield-1 { width: 1px; height: 1px; background: transparent; box-shadow: <?= $starfield1 ?>; animation: driftStars 150s linear infinite; }
         .starfield-1::after { content: " "; position: absolute; top: 2000px; width: 1px; height: 1px; background: transparent; box-shadow: <?= $starfield1 ?>; }
         
@@ -320,7 +321,7 @@ $page_title = $page_title ?? 'PRX Academy';
     <!-- Main Content -->
     <main class="flex-1 flex flex-col min-h-screen transition-all duration-300" :class="!sidebarOpen ? 'w-full' : ''">
         <!-- Topbar -->
-        <header class="h-24 glass-panel border-b border-theme_border flex items-center justify-between px-8 lg:px-12 sticky top-0 z-40 shadow-sm">
+        <header class="h-24 sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-8 lg:px-12 shadow-md">
             <button @click="sidebarOpen = !sidebarOpen" aria-label="Alternar menú lateral" class="text-theme_text_muted hover:text-theme_text text-2xl p-3 rounded-xl focus-visible:ring-4 focus-visible:ring-theme_accent focus-visible:outline-none bg-theme_panel border-2 border-theme_border">
                 <i class="fas fa-bars"></i>
             </button>

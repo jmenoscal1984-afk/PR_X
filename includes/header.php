@@ -8,28 +8,23 @@ $base_dir = $base_dir ?? './';
     /* Estilos Premium para la Barra de Navegación */
     .landing-nav-wrapper {
       position: sticky;
-      top: 20px;
+      top: 0;
       z-index: 1000;
-      padding: 0 24px;
-      pointer-events: none; /* Permite clickar lo que hay debajo del margen */
+      padding: 12px 24px;
+      background: rgba(11, 17, 32, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .landing-nav {
       max-width: 1200px;
       margin: 0 auto;
-      background: rgba(11, 17, 32, 0.65);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(59, 130, 246, 0.25);
-      border-radius: 100px; /* Bordes totalmente redondeados */
-      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.15);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 24px;
       font-family: 'Inter', sans-serif;
-      transition: all 0.4s ease;
-      pointer-events: auto; /* Reactiva los clicks dentro de la navbar */
     }
     
     @media (max-width: 900px) {

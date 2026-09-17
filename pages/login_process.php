@@ -1,6 +1,15 @@
 <?php
+ob_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once '../includes/auth_middleware.php';
 require_once '../includes/conexion.php';
+
+function redirectWithError($message) {
+    header("Location: login.php?error=" . urlencode($message));
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $correo   = trim(filter_input(INPUT_POST, 'correo', FILTER_SANITIZE_EMAIL));
@@ -8,14 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validaciones básicas
     if (empty($correo) || empty($password)) {
-        header("Location: ../index.php?error=" . urlencode("Correo y contraseña obligatorios."));
-        exit;
+        redirectWithError("Correo y contraseña son obligatorios.");
     }
 
     // Validación CSRF
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
-        die("Error: Token CSRF inválido.");
+        redirectWithError("Token CSRF inválido o expirado. Por favor, recarga la página e intenta de nuevo.");
     }
 
     try {
@@ -43,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_logged_in'] = true;
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nombre_completo'];
+            $_SESSION['user_full_name'] = $user['nombre_completo']; // Para compatibilidad
             $_SESSION['user_avatar'] = $user['avatar'];
             
             // Consultar la tabla public.profiles para obtener el rol exacto (student o teacher)
@@ -60,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_role'] = $role;
             }
             
-            // Redirección estricta limpia (usando relativas desde /pages/ para no romper la app en subcarpetas)
+            // Redirección estricta limpia a los paneles
             if ($role === 'teacher') {
                 header("Location: teacher_view.php");
             } else {
@@ -69,17 +78,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         } else {
             // Credenciales incorrectas
-            header("Location: login.php?error=credenciales_invalidas");
-            exit();
+            redirectWithError("Credenciales inválidas. Verifica tu correo y contraseña.");
         }
 
     } catch (PDOException $e) {
         // Manejo de errores seguro
-        header("Location: ../index.php?error=db_error");
-        exit;
+        error_log("Error de base de datos en login: " . $e->getMessage());
+        redirectWithError("Ocurrió un error en el servidor. Inténtalo más tarde.");
     }
 } else {
-    header("Location: ../index.php");
-    exit;
+    // Si no es POST, redirigir al login
+    header("Location: login.php");
+    exit();
 }
 ?>
