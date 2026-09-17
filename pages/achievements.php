@@ -29,42 +29,120 @@ HTML;
 require_once '../includes/tailwind_header.php';
 ?>
 
-<div class="max-w-[1200px] mx-auto space-y-12 animate-[fadeIn_0.5s_ease-out]">
+<div class="max-w-[1200px] mx-auto space-y-12 animate-[fadeIn_0.5s_ease-out]" x-data="{ tab: 'calcomanias' }">
   
-  <div class="glass-panel p-8 sm:p-10 rounded-[2.5rem] border border-theme_border shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-    <div class="relative z-10">
-      <h1 class="font-heading text-4xl font-extrabold text-theme_text flex items-center gap-4 mb-4">
-        <i class="fas fa-briefcase text-theme_accent"></i> Mi Mochila
-      </h1>
-      <p class="text-theme_text_muted text-lg max-w-xl">Colecciona calcomanías estelares y desbloquea insignias por tus grandes hazañas en la academia.</p>
-    </div>
-    <div class="relative z-10 w-32 h-32 bg-[rgba(255,255,255,0.05)] rounded-full border-4 border-theme_accent/30 shadow-[0_0_30px_rgba(168,85,247,0.2)] flex items-center justify-center text-6xl hover:scale-105 transition-transform">
+  <!-- 1. Cabecera (Hero Section) -->
+  <div class="glass-panel p-8 sm:p-10 rounded-[2.5rem] border border-theme_border shadow-xl relative overflow-hidden flex flex-col items-center text-center">
+    <div class="absolute inset-0 bg-gradient-to-br from-purple-900/30 to-blue-900/10 blur-3xl -z-10 pointer-events-none"></div>
+    <div class="w-24 h-24 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-5xl mb-6 shadow-[0_0_40px_rgba(168,85,247,0.5)]">
       🎒
     </div>
-    <div class="absolute right-[-10%] top-[-50%] w-96 h-96 bg-theme_accent/10 rounded-full blur-[80px] pointer-events-none"></div>
+    <h1 class="font-heading text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300 mb-4">
+      Mi Mochila Estelar
+    </h1>
+    <p class="text-theme_text_muted text-lg mb-8 max-w-2xl">
+      Tu colección personal de hazañas. Cada calcomanía y medalla es un testimonio de tu viaje en la academia.
+    </p>
+    
+    <!-- Barra de progreso general -->
+    <div class="w-full max-w-md bg-theme_bg/80 rounded-full h-4 border border-[rgba(255,255,255,0.1)] p-0.5 shadow-inner overflow-hidden relative">
+      <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-transparent"></div>
+      <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full shadow-[0_0_15px_rgba(236,72,153,0.6)] relative z-10" style="width: 15%;"></div>
+    </div>
+    <p class="text-xs text-theme_text_muted font-bold tracking-widest uppercase mt-3">
+      Nivel de Coleccionista: 15% completado
+    </p>
   </div>
 
-  <!-- STICKERS / CALCOMANÍAS -->
-  <section>
-    <div class="flex items-center gap-4 mb-6">
-      <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl shadow-inner border border-purple-500/30">
-        <i class="fas fa-sticky-note"></i>
-      </div>
-      <h2 class="font-heading text-3xl font-bold text-theme_text">Álbum de Calcomanías</h2>
+  <!-- 2. Sistema de Pestañas (Tabs) con Alpine.js -->
+  <div class="flex justify-center">
+    <div class="glass-panel inline-flex p-1.5 rounded-full border border-[rgba(255,255,255,0.1)] shadow-lg gap-2">
+      <button @click="tab = 'calcomanias'" 
+              :class="tab === 'calcomanias' ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 text-white shadow-[0_0_15px_rgba(168,85,247,0.5)] border border-purple-400/50' : 'text-theme_text_muted hover:text-white border border-transparent hover:bg-white/5'"
+              class="px-6 md:px-8 py-3 rounded-full font-bold text-sm transition-all duration-300 flex items-center">
+        <i class="fas fa-sticky-note mr-2"></i> Álbum de Calcomanías
+      </button>
+      <button @click="tab = 'insignias'" 
+              :class="tab === 'insignias' ? 'bg-gradient-to-r from-blue-600/80 to-cyan-600/80 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)] border border-blue-400/50' : 'text-theme_text_muted hover:text-white border border-transparent hover:bg-white/5'"
+              class="px-6 md:px-8 py-3 rounded-full font-bold text-sm transition-all duration-300 flex items-center">
+        <i class="fas fa-medal mr-2"></i> Insignias de Honor
+      </button>
     </div>
-    <div id="stickers-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-  </section>
+  </div>
 
-  <!-- LOGROS / INSIGNIAS -->
-  <section>
-    <div class="flex items-center gap-4 mb-6">
-      <div class="w-12 h-12 rounded-xl bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-2xl shadow-inner border border-yellow-500/30">
-        <i class="fas fa-medal"></i>
+  <!-- Contenedor de Vistas -->
+  <div class="relative min-h-[500px]">
+    
+    <!-- 3. Cuadrícula de Calcomanías -->
+    <div x-show="tab === 'calcomanias'" 
+         x-transition:enter="transition ease-out duration-500" 
+         x-transition:enter-start="opacity-0 translate-y-8 scale-95" 
+         x-transition:enter-end="opacity-100 translate-y-0 scale-100" 
+         class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+      
+      <!-- EJEMPLO: ESTADO DESBLOQUEADO (Holográfico) -->
+      <div class="glass-panel aspect-[3/4] rounded-2xl border-2 border-purple-500/30 p-4 flex flex-col items-center justify-between hover:scale-105 hover:border-purple-400 hover:shadow-[0_0_25px_rgba(168,85,247,0.4)] transition-all duration-300 group cursor-pointer relative overflow-hidden bg-gradient-to-br from-[rgba(255,255,255,0.05)] to-purple-500/10">
+        <!-- Brillo holográfico on hover -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-700 pointer-events-none transform -skew-x-12 -ml-20 w-[200%]"></div>
+        <!-- Contenedor del Icono -->
+        <div class="w-full aspect-square bg-theme_bg/50 rounded-xl shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)] border border-theme_border/50 flex items-center justify-center text-5xl md:text-6xl group-hover:rotate-12 transition-transform duration-500 bg-gradient-to-br from-gray-800 to-gray-900">
+          🚀
+        </div>
+        <div class="text-center w-full mt-3">
+          <h3 class="font-heading font-extrabold text-white text-sm md:text-base leading-tight">Primer Vuelo</h3>
+          <p class="text-[10px] text-purple-300 mt-1 uppercase font-bold tracking-wider"><i class="fas fa-check-circle"></i> Adquirida</p>
+        </div>
       </div>
-      <h2 class="font-heading text-3xl font-bold text-theme_text">Insignias de Honor</h2>
+
+      <!-- EJEMPLO: ESTADO BLOQUEADO -->
+      <div class="glass-panel aspect-[3/4] rounded-2xl border-2 border-dashed border-theme_border/50 p-4 flex flex-col items-center justify-between bg-theme_bg/40 grayscale opacity-50 relative pointer-events-none">
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl text-gray-500 z-10 drop-shadow-md">
+          <i class="fas fa-lock"></i>
+        </div>
+        <div class="w-full aspect-square bg-theme_bg rounded-xl shadow-inner border border-theme_border/30 flex items-center justify-center text-6xl blur-[3px]">
+          👽
+        </div>
+        <div class="text-center w-full mt-3">
+          <h3 class="font-heading font-bold text-gray-400 text-sm md:text-base leading-tight">???</h3>
+          <p class="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-wider">Bloqueado</p>
+        </div>
+      </div>
+      
     </div>
-    <div id="achievements-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-  </section>
+
+    <!-- 4. Cuadrícula de Insignias -->
+    <div x-show="tab === 'insignias'" 
+         x-transition:enter="transition ease-out duration-500" 
+         x-transition:enter-start="opacity-0 translate-y-8 scale-95" 
+         x-transition:enter-end="opacity-100 translate-y-0 scale-100" 
+         style="display: none;"
+         class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 place-items-center">
+      
+      <!-- EJEMPLO: INSIGNIA DESBLOQUEADA -->
+      <div class="group flex flex-col items-center cursor-pointer hover:-translate-y-2 transition-transform duration-300">
+        <!-- Medalla base -->
+        <div class="w-28 h-28 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 p-[3px] shadow-[0_0_15px_rgba(59,130,246,0.5)] group-hover:shadow-[0_0_30px_rgba(59,130,246,0.8)] transition-shadow">
+          <div class="w-full h-full rounded-full bg-theme_panel border-[4px] border-indigo-900/80 flex items-center justify-center text-4xl shadow-inner relative overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(59,130,246,0.3)_0%,_transparent_70%)]"></div>
+            <i class="fas fa-brain text-blue-400 group-hover:text-white transition-colors relative z-10 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]"></i>
+          </div>
+        </div>
+        <h3 class="mt-4 font-heading font-extrabold text-blue-300 text-center text-sm uppercase tracking-wide">Mente Maestra</h3>
+      </div>
+
+      <!-- EJEMPLO: INSIGNIA BLOQUEADA -->
+      <div class="flex flex-col items-center grayscale opacity-40">
+        <div class="w-28 h-28 rounded-full bg-theme_border p-[3px] border border-dashed border-gray-600">
+          <div class="w-full h-full rounded-full bg-theme_bg flex items-center justify-center text-3xl shadow-inner">
+            <i class="fas fa-lock text-gray-500"></i>
+          </div>
+        </div>
+        <h3 class="mt-4 font-heading font-bold text-gray-500 text-center text-sm uppercase tracking-wide">Desconocida</h3>
+      </div>
+
+    </div>
+
+  </div>
 
 </div>
 

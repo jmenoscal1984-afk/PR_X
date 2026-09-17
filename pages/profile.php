@@ -42,148 +42,148 @@ HTML;
 require_once '../includes/tailwind_header.php';
 ?>
 
-<div class="page-content">
-  <div class="profile-grid">
-    <section class="card">
-      <div class="section-title"><div class="section-icon" style="background:rgba(147,51,234,0.2);color:var(--accent)">👤</div>Datos personales</div>
-      <div style="display:flex;gap:18px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
-        <div id="profile-avatar" style="font-size:64px; width:80px; height:80px; display:flex; align-items:center; justify-content:center;">🧑‍💻</div>
-        <div>
-          <h2 id="profile-name" style="font-family:var(--font-heading);font-size:1.4rem;font-weight:800;margin:0 0 6px">Cargando...</h2>
-          <p id="profile-email" style="color:var(--text-muted);margin:0">cargando...</p>
+<main class="max-w-6xl mx-auto px-4 py-8 animate-[fadeIn_0.5s_ease-out]">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Columna Izquierda: Identidad y Subida (1/3) -->
+    <div class="lg:col-span-1 space-y-6">
+      <form action="update_profile.php" method="POST" enctype="multipart/form-data" 
+            x-data="{ 
+              photoPreview: '<?= htmlspecialchars($userAvatar) ?>', 
+              fileChosen(event) {
+                const file = event.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (e) => { this.photoPreview = e.target.result; };
+                  reader.readAsDataURL(file);
+                }
+              }
+            }" 
+            class="bg-[#1E293B]/80 backdrop-blur border border-white/5 rounded-3xl p-6 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+        
+        <!-- Gradiente de fondo -->
+        <div class="absolute inset-0 bg-gradient-to-b from-blue-600/10 to-transparent pointer-events-none"></div>
+
+        <!-- Avatar Upload -->
+        <div class="relative group cursor-pointer w-32 h-32 mb-4 rounded-full overflow-hidden ring-4 ring-blue-500/30 ring-offset-4 ring-offset-[#0F172A] transition-all hover:ring-blue-400">
+          <template x-if="photoPreview.startsWith('http') || photoPreview.startsWith('data:')">
+            <img :src="photoPreview" alt="Avatar" class="w-full h-full object-cover">
+          </template>
+          <template x-if="!photoPreview.startsWith('http') && !photoPreview.startsWith('data:')">
+             <div class="w-full h-full flex items-center justify-center text-6xl bg-gray-800" x-text="photoPreview"></div>
+          </template>
+          
+          <!-- Overlay hover -->
+          <div class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <i class="fas fa-camera text-white text-2xl mb-1"></i>
+            <span class="text-[10px] text-white font-bold tracking-wider uppercase">Cambiar</span>
+          </div>
+          <!-- Input File -->
+          <input type="file" name="avatar_file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="fileChosen">
+        </div>
+
+        <!-- Info -->
+        <h2 class="text-2xl font-bold text-white mb-1"><?= htmlspecialchars($userName) ?></h2>
+        <span class="bg-gradient-to-r from-amber-500 to-orange-600 text-[10px] font-black tracking-wider px-3 py-1 rounded-full text-white uppercase shadow-[0_0_10px_rgba(245,158,11,0.5)] mb-6 inline-block">
+          <?= htmlspecialchars($userRole) ?>
+        </span>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 gap-3 w-full mb-6">
+          <!-- Nivel -->
+          <div class="bg-black/20 border border-white/5 rounded-2xl p-3 flex flex-col items-center">
+            <i class="fas fa-star text-yellow-400 text-lg drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] mb-1"></i>
+            <span class="text-white font-bold"><?= htmlspecialchars($userLevel) ?></span>
+            <span class="text-[9px] text-slate-400 uppercase tracking-widest mt-1">Nivel</span>
+          </div>
+          <!-- XP -->
+          <div class="bg-black/20 border border-white/5 rounded-2xl p-3 flex flex-col items-center">
+            <i class="fas fa-bolt text-blue-400 text-lg drop-shadow-[0_0_8px_rgba(59,130,246,0.8)] mb-1"></i>
+            <span class="text-white font-bold"><?= $userXP ?></span>
+            <span class="text-[9px] text-slate-400 uppercase tracking-widest mt-1">XP Total</span>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full max-w-[200px] py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-white/10 hover:border-blue-400 transition-all flex items-center justify-center gap-2 mx-auto">
+          <i class="fas fa-upload"></i> Guardar Foto
+        </button>
+      </form>
+    </div>
+
+    <!-- Columna Derecha: Formularios (2/3) -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Tarjeta A: Datos Personales -->
+      <div class="bg-[#1E293B]/80 backdrop-blur border border-white/5 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px] pointer-events-none"></div>
+        <h3 class="flex items-center gap-3 text-xl font-bold text-white mb-6 relative">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shadow-inner border border-blue-500/30">
+            <i class="fas fa-id-card"></i>
+          </div>
+          Datos Personales
+        </h3>
+        
+        <form class="space-y-5 relative">
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nombre Visible</label>
+            <input type="text" value="<?= htmlspecialchars($userName) ?>" name="nombre" class="w-full bg-[#0F172A] border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-inner">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Correo Electrónico</label>
+            <input type="email" value="<?= htmlspecialchars($_SESSION['usuario_correo'] ?? '') ?>" disabled class="w-full bg-[#0F172A]/50 border border-slate-800 text-slate-500 rounded-xl px-4 py-3 cursor-not-allowed shadow-inner">
+            <p class="text-xs text-slate-500 ml-1 mt-1">El correo no puede ser modificado por seguridad.</p>
+          </div>
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-sm shadow-[0_4px_15px_rgba(59,130,246,0.4)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.6)] hover:-translate-y-0.5 transition-all flex items-center gap-2">
+              <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tarjeta B: Seguridad -->
+      <div class="bg-[#1E293B]/80 backdrop-blur border border-white/5 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+        <h3 class="flex items-center gap-3 text-xl font-bold text-white mb-6">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center shadow-inner border border-purple-500/30">
+            <i class="fas fa-lock"></i>
+          </div>
+          Seguridad
+        </h3>
+        
+        <form class="space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="space-y-1.5">
+              <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Contraseña Actual</label>
+              <input type="password" name="current_password" class="w-full bg-[#0F172A] border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all shadow-inner">
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nueva Contraseña</label>
+              <input type="password" name="new_password" class="w-full bg-[#0F172A] border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all shadow-inner">
+            </div>
+          </div>
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="px-8 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 hover:border-purple-400 transition-all flex items-center gap-2">
+              <i class="fas fa-key"></i> Actualizar Contraseña
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tarjeta C: Peligro -->
+      <div class="bg-red-950/10 border border-red-500/20 rounded-3xl p-6 shadow-lg mt-4">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h4 class="text-red-400 font-bold mb-1"><i class="fas fa-exclamation-triangle mr-2"></i> Zona de Peligro</h4>
+            <p class="text-sm text-slate-400">Restablecer tu progreso borrará permanentemente toda tu XP, rachas e insignias.</p>
+          </div>
+          <button type="button" onclick="confirm('¿Estás seguro de que quieres borrar todo tu progreso?') && alert('Esta acción requerirá confirmación del backend próximamente.');" class="px-6 py-2.5 rounded-xl bg-red-500/20 text-red-400 font-bold text-sm border border-red-500/30 hover:bg-red-500 hover:text-white transition-all whitespace-nowrap">
+            Restablecer Progreso
+          </button>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
-        <div class="mini-stat"><div style="font-size:1.2rem">⭐</div><div><strong id="profile-xp">0 XP</strong><span style="font-size:0.82rem;color:var(--text-muted)">Experiencia total</span></div></div>
-        <div class="mini-stat"><div style="font-size:1.2rem">🏅</div><div><strong id="profile-level">Nivel 1</strong><span style="font-size:0.82rem;color:var(--text-muted)">Rango actual</span></div></div>
-        <div class="mini-stat"><div style="font-size:1.2rem">🔥</div><div><strong id="profile-streak">0 días</strong><span style="font-size:0.82rem;color:var(--text-muted)">Racha</span></div></div>
-        <div class="mini-stat"><div style="font-size:1.2rem">✅</div><div><strong id="profile-quizzes">0</strong><span style="font-size:0.82rem;color:var(--text-muted)">Quizzes completados</span></div></div>
-      </div>
-      <form id="profile-form" class="form-grid" style="display:grid;gap:12px">
-        <div class="form-group"><label class="form-label" for="nameInput">Nombre visible</label><input id="nameInput" class="form-input" type="text" required /></div>
-        <div class="form-group"><label class="form-label">Avatar</label><div class="avatar-grid" id="avatar-grid"></div></div>
-        <button class="btn btn-primary" type="submit">Guardar cambios</button>
-      </form>
-    </section>
 
-    <section class="card">
-      <div class="section-title"><div class="section-icon" style="background:rgba(168,85,247,0.2);color:var(--accent)">🔐</div>Seguridad</div>
-      <form id="password-form" style="display:grid;gap:12px">
-        <div class="form-group"><label class="form-label" for="currentPassword">Contraseña actual</label><input id="currentPassword" class="form-input" type="password" required /></div>
-        <div class="form-group"><label class="form-label" for="newPassword">Nueva contraseña</label><input id="newPassword" class="form-input" type="password" minlength="6" required /></div>
-        <button class="btn btn-ghost" type="submit">Cambiar contraseña</button>
-      </form>
-      <div class="divider"></div>
-      <button class="btn btn-danger" id="reset-btn" type="button">Restablecer progreso</button>
-      <p style="font-size:0.82rem;color:var(--text-muted);margin-top:10px">Esta acción borra XP, rachas y logros del usuario actual.</p>
-    </section>
+    </div>
   </div>
-</div>
-<div id="toast-container" class="toast-container"></div>
-
-<script src="../js/data.js"></script>
-<script src="../js/storage.js"></script>
-<script src="../js/auth.js"></script>
-<script src="../js/gamification.js"></script>
-<script src="../js/ui.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const user = EQ_Auth.getUser();
-    if (!user) return;
-    EQ_UI.init(user);
-
-    let selectedAvatar = user.avatar || 0;
-    let currentAvatarUrl = (typeof selectedAvatar === 'number') ? EQ_DATA.avatars[selectedAvatar] : selectedAvatar;
-    
-    const avatarGrid = document.getElementById('avatar-grid');
-    EQ_DATA.avatars.forEach((avatarUrl, index) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      const isActive = (avatarUrl === currentAvatarUrl || index === selectedAvatar);
-      btn.className = 'avatar-chip overflow-hidden relative' + (isActive ? ' active' : '');
-      
-      const img = document.createElement('img');
-      img.src = avatarUrl;
-      img.alt = `Avatar ${index + 1}`;
-      img.className = 'w-full h-full object-cover';
-      btn.appendChild(img);
-      
-      btn.title = `Avatar ${index + 1}`;
-      btn.addEventListener('click', () => {
-        selectedAvatar = avatarUrl;
-        currentAvatarUrl = avatarUrl;
-        [...avatarGrid.children].forEach((child, i) => child.classList.toggle('active', i === index));
-      });
-      avatarGrid.appendChild(btn);
-    });
-
-    const levelInfo = EQ_Gamification.getLevelInfo(user.xp);
-    
-    const profileAvatarContainer = document.getElementById('profile-avatar');
-    if (currentAvatarUrl.startsWith('http')) {
-        profileAvatarContainer.innerHTML = `<img src="${currentAvatarUrl}" alt="Avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;border:4px solid var(--border-color);">`;
-    } else {
-        profileAvatarContainer.textContent = EQ_DATA.avatars[user.avatar] || '🧑‍💻';
-    }
-    
-    document.getElementById('profile-name').textContent = user.name;
-    document.getElementById('profile-email').textContent = user.email;
-    document.getElementById('profile-xp').textContent = `${user.xp} XP`;
-    document.getElementById('profile-level').textContent = `Nivel ${levelInfo.level} · ${levelInfo.name}`;
-    document.getElementById('profile-streak').textContent = `${user.streak || 0} días`;
-    document.getElementById('profile-quizzes').textContent = user.stats?.totalQuizzes || 0;
-    document.getElementById('nameInput').value = user.name;
-
-    // Validación visual
-    const validateInput = (input, minLength = 0) => {
-      if (input.value.length >= minLength && input.value.trim() !== '') {
-        input.classList.add('input-success');
-        input.classList.remove('input-error');
-      } else {
-        input.classList.add('input-error');
-        input.classList.remove('input-success');
-      }
-    };
-    
-    document.getElementById('nameInput').addEventListener('input', (e) => validateInput(e.target, 3));
-    document.getElementById('currentPassword').addEventListener('input', (e) => validateInput(e.target, 4));
-    document.getElementById('newPassword').addEventListener('input', (e) => validateInput(e.target, 6));
-
-    document.getElementById('profile-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('nameInput').value.trim();
-      const result = EQ_Auth.updateProfile({ name, avatar: selectedAvatar });
-      if (result.ok) {
-        EQ_UI.showToast({ type: 'success', icon: '✅', title: 'Perfil actualizado', message: 'Tu nombre y avatar se guardaron correctamente.' });
-        setTimeout(() => location.reload(), 700);
-      } else {
-        EQ_UI.showToast({ type: 'error', icon: '❌', title: 'No se pudo actualizar', message: result.error });
-      }
-    });
-
-    document.getElementById('password-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const current = document.getElementById('currentPassword').value;
-      const next = document.getElementById('newPassword').value;
-      const result = EQ_Auth.changePassword(current, next);
-      if (result.ok) {
-        EQ_UI.showToast({ type: 'success', icon: '🔐', title: 'Contraseña cambiada', message: 'Tu contraseña se actualizó correctamente.' });
-        e.target.reset();
-        document.getElementById('currentPassword').classList.remove('input-success');
-        document.getElementById('newPassword').classList.remove('input-success');
-      } else {
-        EQ_UI.showToast({ type: 'error', icon: '❌', title: 'Error', message: result.error });
-      }
-    });
-
-    document.getElementById('reset-btn').addEventListener('click', () => {
-      EQ_UI.confirm('¿Deseas restablecer tu progreso? Se perderán XP, rachas y logros.', () => {
-        EQ_Auth.resetProgress();
-        EQ_UI.showToast({ type: 'warning', icon: '🧹', title: 'Progreso reiniciado', message: 'Tu avance quedó en cero.' });
-        setTimeout(() => location.reload(), 700);
-      });
-    });
-  });
-</script>
+</main>
 
 <?php require_once '../includes/tailwind_footer.php'; ?>
