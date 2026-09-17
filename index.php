@@ -909,10 +909,10 @@ if (empty($subjects)) {
           <i class="<?= htmlspecialchars($hero_btn_icon) ?> text-xl mr-2"></i> <?= htmlspecialchars($hero_btn_text) ?>
         </a>
         <?php else: ?>
-        <a href="pages/register.php" class="inline-block btn btn-primary btn-xl text-lg font-bold rounded-full shadow-[0_0_25px_rgba(59,130,246,0.6)] focus:ring-4 focus:ring-yellow-400 transition-all hover:-translate-y-1 hover:scale-105 relative z-50">
+        <a x-data href="#" @click.prevent="$dispatch('abrir-registro')" class="inline-block btn btn-primary btn-xl text-lg font-bold rounded-full shadow-[0_0_25px_rgba(59,130,246,0.6)] focus:ring-4 focus:ring-yellow-400 transition-all hover:-translate-y-1 hover:scale-105 relative z-50">
           <i class="fas fa-rocket text-xl mr-2 animate-pulse"></i> Comenzar Aventura
         </a>
-        <a href="pages/login.php" class="inline-block btn btn-ghost btn-xl text-lg font-bold rounded-full border-2 border-gray-400 hover:border-white focus:ring-4 focus:ring-yellow-400 transition-all hover:bg-white/10 hover:-translate-y-1 hover:scale-105 relative z-50">
+        <a x-data href="#" @click.prevent="$dispatch('abrir-login')" class="inline-block btn btn-ghost btn-xl text-lg font-bold rounded-full border-2 border-gray-400 hover:border-white focus:ring-4 focus:ring-yellow-400 transition-all hover:bg-white/10 hover:-translate-y-1 hover:scale-105 relative z-50">
           <i class="fas fa-sign-in-alt text-xl mr-2"></i> Ya soy Héroe
         </a>
         <?php endif; ?>
@@ -1051,10 +1051,10 @@ if (empty($subjects)) {
           <i class="<?= htmlspecialchars($hero_btn_icon) ?> mr-3 text-xl"></i> <?= htmlspecialchars($hero_btn_text) ?>
         </a>
         <?php else: ?>
-        <a href="pages/register.php" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white rounded-full bg-gradient-to-r from-purple-600 to-pink-600 shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:shadow-[0_0_50px_rgba(236,72,153,0.8)] transform hover:scale-105 transition-all duration-300 animate-float relative z-50">
+        <a x-data href="#" @click.prevent="$dispatch('abrir-registro')" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white rounded-full bg-gradient-to-r from-purple-600 to-pink-600 shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:shadow-[0_0_50px_rgba(236,72,153,0.8)] transform hover:scale-105 transition-all duration-300 animate-float relative z-50">
           <i class="fas fa-rocket mr-3 text-xl"></i> Crear Cuenta Gratis
         </a>
-        <a href="pages/login.php" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white rounded-full bg-gray-800/80 border border-gray-600 backdrop-blur-sm hover:bg-gray-700 hover:border-blue-400 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transform hover:scale-105 transition-all duration-300 relative z-50">
+        <a x-data href="#" @click.prevent="$dispatch('abrir-login')" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white rounded-full bg-gray-800/80 border border-gray-600 backdrop-blur-sm hover:bg-gray-700 hover:border-blue-400 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transform hover:scale-105 transition-all duration-300 relative z-50">
           <i class="fas fa-sign-in-alt mr-3 text-xl"></i> Iniciar Sesión
         </a>
         <?php endif; ?>
