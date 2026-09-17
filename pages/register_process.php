@@ -75,6 +75,7 @@ try {
         $_SESSION['usuario_id'] = $new_user_id;
         $_SESSION['usuario_nombre'] = $nombre;
         $_SESSION['usuario_rol'] = $rol;
+        $_SESSION['usuario_avatar'] = $avatar;
         
         $role_en = ($rol === 'profesor') ? 'teacher' : 'student';
         try {

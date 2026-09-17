@@ -31,7 +31,7 @@ try {
         throw new Exception('Error 500: La conexión a la base de datos es nula.');
     }
 
-    $stmt = $pdo->prepare("SELECT id, nombre_completo, rol, password FROM usuarios WHERE correo = :correo LIMIT 1");
+    $stmt = $pdo->prepare("SELECT id, nombre_completo, rol, password, avatar FROM usuarios WHERE correo = :correo LIMIT 1");
     $stmt->execute([':correo' => $email]);
     $usuario = $stmt->fetch();
 
@@ -40,6 +40,7 @@ try {
         $_SESSION['usuario_id'] = $usuario['id'];
         $_SESSION['usuario_nombre'] = $usuario['nombre_completo'];
         $_SESSION['usuario_rol'] = $usuario['rol'];
+        $_SESSION['usuario_avatar'] = $usuario['avatar'];
         
         ob_end_clean();
         header('Content-Type: application/json; charset=utf-8');

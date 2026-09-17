@@ -34,7 +34,7 @@ $_SESSION['last_activity'] = time(); // Actualizar tiempo de última actividad
 $require_auth = isset($require_auth) ? $require_auth : true;
 
 if ($require_auth) {
-    if (!isset($_SESSION['user_id'])) {
+    if (!isset($_SESSION['usuario_id'])) {
         // Usuario no autenticado, redirigir al login
         header("Location: ../index.php?error=" . urlencode("Debes iniciar sesión para acceder."));
         exit;
@@ -46,7 +46,7 @@ if ($require_auth) {
 $require_teacher = isset($require_teacher) ? $require_teacher : false;
 
 if ($require_teacher) {
-    if (!isset($_SESSION['user_role']) || ($_SESSION['user_role'] !== 'teacher' && $_SESSION['user_role'] !== 'profesor')) {
+    if (!isset($_SESSION['usuario_rol']) || ($_SESSION['usuario_rol'] !== 'teacher' && $_SESSION['usuario_rol'] !== 'profesor')) {
         header("Location: student_view.php?error=" . urlencode("Acceso denegado. Esta sección es solo para profesores."));
         exit;
     }

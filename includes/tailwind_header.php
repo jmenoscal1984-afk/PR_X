@@ -19,10 +19,10 @@ $starfield1 = generateStars(350, '#FFFFFF'); // Blancas pequeñas
 $starfield2 = generateStars(100, '#FEF08A'); // Amarillas estelares medianas
 $starfield3 = generateStars(50, '#A5F3FC');  // Cian grandes
 
-$userId = $_SESSION['user_id'] ?? null;
-$userName = $_SESSION['user_name'] ?? 'Usuario';
-$userRole = $_SESSION['user_role'] ?? 'alumno';
-$userAvatar = $_SESSION['user_avatar'] ?? '👨‍🎓';
+$userId = $_SESSION['usuario_id'] ?? null;
+$userName = $_SESSION['usuario_nombre'] ?? 'Usuario';
+$userRole = $_SESSION['usuario_rol'] ?? 'alumno';
+$userAvatar = $_SESSION['usuario_avatar'] ?? '👨‍🎓';
 $userXP = $_SESSION['user_xp'] ?? 1500;
 $userLevel = $_SESSION['user_level'] ?? 'Explorador';
 $current_page = $current_page ?? 'dashboard.php';
