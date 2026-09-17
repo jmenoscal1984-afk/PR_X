@@ -1,8 +1,10 @@
 <?php
 // pages/login.php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 session_start();
 
-require_once '../includes/conexion.php';
+require_once '../includes/db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['correo'] ?? '');
