@@ -1078,7 +1078,12 @@ if (empty($subjects)) {
              try {
                const json = JSON.parse(text);
                if (json.success) {
-                 window.location.href = 'pages/dashboard.php';
+                 const btn = e.target.querySelector('button[type="submit"]');
+                 if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirigiendo...';
+                 setTimeout(() => {
+                   window.location.href = 'pages/dashboard.php';
+                 }, 500);
+                 return;
                } else {
                  this.errorMessage = json.message;
                }
@@ -1239,7 +1244,12 @@ if (empty($subjects)) {
              try {
                const json = JSON.parse(text);
                if (json.success) {
-                 window.location.href = 'pages/dashboard.php';
+                 const btn = e.target.querySelector('button[type="submit"]');
+                 if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirigiendo...';
+                 setTimeout(() => {
+                   window.location.href = 'pages/dashboard.php';
+                 }, 500);
+                 return;
                } else {
                  this.errorMessage = json.message;
                }
