@@ -19,4 +19,3 @@ try {
 } catch (PDOException $e) {
     die("Error de conexión a MySQL: " . $e->getMessage());
 }
-?>

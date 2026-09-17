@@ -1,13 +1,12 @@
 <?php
 ob_start();
-header('Content-Type: application/json; charset=utf-8');
-
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 try {
-    require_once '../includes/auth_middleware.php';
     require_once '../includes/db_connect.php';
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -26,21 +25,19 @@ try {
     }
 
     if (empty($nombre) || empty($correo) || empty($password)) {
-        ob_clean();
+        ob_end_clean();
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => false, 'message' => 'Correo inválido o datos incompletos.']);
         exit;
     }
 
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        ob_clean();
+        ob_end_clean();
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => false, 'message' => 'El formato del correo es inválido (ej. falta .com).']);
         exit;
     }
 
-    $csrf_token = $_POST['csrf_token'] ?? '';
-    if (!validate_csrf_token($csrf_token)) {
-        throw new Exception("Token de seguridad inválido. Recarga la página.");
-    }
 
     if (strlen($password) < 6) {
         throw new Exception("La contraseña debe tener al menos 6 caracteres.");
@@ -54,7 +51,8 @@ try {
     $stmtCheck->execute([':correo' => $correo]);
     
     if ($stmtCheck->fetch()) {
-        ob_clean();
+        ob_end_clean();
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => false, 'message' => 'Este correo ya está registrado.']);
         exit;
     }
@@ -84,7 +82,8 @@ try {
             $stmtProfile->execute([$new_user_id, $nombre, $role_en]);
         } catch (Exception $e) {}
 
-        ob_clean();
+        ob_end_clean();
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => true]);
         exit;
     } else {
@@ -92,8 +91,9 @@ try {
     }
 
 } catch (Exception $e) {
-    ob_clean();
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    ob_end_clean();
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'message' => 'Error interno: ' . $e->getMessage()]);
     exit;
 }
 ?>

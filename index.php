@@ -1084,7 +1084,7 @@ if (empty($subjects)) {
                }
              } catch(parseErr) {
                console.error('Error del servidor (no es JSON válido):', text);
-               this.errorMessage = 'Error del servidor. Presiona F12 y revisa la Consola para ver el motivo exacto.';
+               this.errorMessage = 'Error del servidor: ' + text.substring(0, 100);
              }
            } catch(err) {
              this.errorMessage = 'Error de red. Verifica tu conexión.';
@@ -1245,7 +1245,7 @@ if (empty($subjects)) {
                }
              } catch (parseErr) {
                console.error('Error del servidor (no es JSON válido):', text);
-               this.errorMessage = 'Error del servidor. Presiona F12 y revisa la Consola para ver el motivo exacto.';
+               this.errorMessage = 'Error del servidor: ' + text.substring(0, 100);
              }
            } catch(err) {
              this.errorMessage = 'Error de red. Verifica tu conexión.';

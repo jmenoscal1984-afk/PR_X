@@ -1,13 +1,14 @@
 <?php
 ob_start();
-header('Content-Type: application/json; charset=utf-8');
-
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 if (isset($_SESSION['usuario_id'])) {
-    ob_clean();
+    ob_end_clean();
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['success' => true]);
     exit;
 }
@@ -40,15 +41,17 @@ try {
         $_SESSION['usuario_nombre'] = $usuario['nombre_completo'];
         $_SESSION['usuario_rol'] = $usuario['rol'];
         
-        ob_clean();
+        ob_end_clean();
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => true]);
         exit; 
     } else {
         throw new Exception('Credenciales inválidas. Verifica tu correo y contraseña.');
     }
 } catch (Exception $e) {
-    ob_clean();
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    ob_end_clean();
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'message' => 'Error interno: ' . $e->getMessage()]);
     exit;
 }
 ?>
