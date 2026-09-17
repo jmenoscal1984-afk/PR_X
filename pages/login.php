@@ -12,13 +12,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if (!empty($email) && !empty($password)) {
         try {
-            // Consultar la tabla "usuarios"
-            $stmt = $pdo->prepare("SELECT id, nombre_completo, rol, password_hash FROM usuarios WHERE correo = :correo LIMIT 1");
+            // Verificar si $pdo existe y es válido
+            if (!$pdo) {
+                die("Error 500: La conexión a la base de datos (PDO) es nula.");
+            }
+
+            // Consultar la tabla "usuarios" con la columna 'password' correcta de MySQL
+            $stmt = $pdo->prepare("SELECT id, nombre_completo, rol, password FROM usuarios WHERE correo = :correo LIMIT 1");
             $stmt->execute([':correo' => $email]);
             $usuario = $stmt->fetch();
 
             // Verificamos si el usuario existe y si la contraseña es correcta
-            if ($usuario && password_verify($password, $usuario['password_hash'])) {
+            if ($usuario && password_verify($password, $usuario['password'])) {
                 
                 // Regenerar ID de sesión para mayor seguridad
                 session_regenerate_id(true);

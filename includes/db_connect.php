@@ -1,19 +1,22 @@
 <?php
+// includes/db_connect.php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-// Usando la IP directa (IPv4) resuelta de aws-0-us-east-1.pooler.supabase.com para evitar el fallo de DNS
-define('DB_HOST', '52.45.94.125');
-define('DB_PORT', '6543');
-define('DB_NAME', 'postgres');
-// El usuario DEBE llevar el sufijo para que el pooler por IP sepa a qué proyecto enviarlo
-define('DB_USER', 'postgres.tvmaztgcmxjqkqrlijvhz');
-define('DB_PASSWORD', 'B?7SrK44+?^838');
+
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'u895966119_u895966119_edu');
+define('DB_USER', 'u895966119_u895966119_usr');
+define('DB_PASSWORD', 'PrxAcademy2026');
+
 try {
-    // Se ha quitado el sslmode=require para pruebas, si Hostinger lo bloquea, asegúrate de mantenerlo así temporalmente.
-    $dsn = 'pgsql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME;
+    // Conexión nativa a MySQL
+    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
     $pdo = new PDO($dsn, DB_USER, DB_PASSWORD);
-    echo 'Conectado con éxito mediante IP Directa (Pooler)';
+    
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 } catch (PDOException $e) {
-    echo 'Fallo de conexion: ' . $e->getMessage();
+    die("Error de conexión a MySQL: " . $e->getMessage());
 }
 ?>
