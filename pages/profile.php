@@ -47,15 +47,46 @@ require_once '../includes/tailwind_header.php';
     
     <!-- Columna Izquierda: Identidad y Subida (1/3) -->
     <div class="lg:col-span-1 space-y-6">
-      <form action="update_profile.php" method="POST" enctype="multipart/form-data" 
+      <form @submit.prevent="uploadAvatar" enctype="multipart/form-data" 
             x-data="{ 
               photoPreview: '<?= htmlspecialchars($userAvatar) ?>', 
+              isUploading: false,
               fileChosen(event) {
                 const file = event.target.files[0];
                 if (file) {
                   const reader = new FileReader();
                   reader.onload = (e) => { this.photoPreview = e.target.result; };
                   reader.readAsDataURL(file);
+                }
+              },
+              async uploadAvatar(event) {
+                const fileInput = event.target.querySelector('input[type=file]');
+                if (!fileInput.files.length) {
+                    alert('Selecciona una imagen primero.');
+                    return;
+                }
+                
+                this.isUploading = true;
+                const formData = new FormData();
+                formData.append('avatar_file', fileInput.files[0]);
+
+                try {
+                    const response = await fetch('procesar_avatar.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert('¡Avatar actualizado con éxito!');
+                        window.location.reload(); 
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                } catch (error) {
+                    alert('Error de conexión al servidor.');
+                } finally {
+                    this.isUploading = false;
                 }
               }
             }" 
@@ -66,10 +97,10 @@ require_once '../includes/tailwind_header.php';
 
         <!-- Avatar Upload -->
         <div class="relative group cursor-pointer w-32 h-32 mb-4 rounded-full overflow-hidden ring-4 ring-blue-500/30 ring-offset-4 ring-offset-[#0F172A] transition-all hover:ring-blue-400">
-          <template x-if="photoPreview.startsWith('http') || photoPreview.startsWith('data:')">
+          <template x-if="photoPreview.startsWith('http') || photoPreview.startsWith('data:') || photoPreview.includes('/')">
             <img :src="photoPreview" alt="Avatar" class="w-full h-full object-cover">
           </template>
-          <template x-if="!photoPreview.startsWith('http') && !photoPreview.startsWith('data:')">
+          <template x-if="!photoPreview.startsWith('http') && !photoPreview.startsWith('data:') && !photoPreview.includes('/')">
              <div class="w-full h-full flex items-center justify-center text-6xl bg-gray-800" x-text="photoPreview"></div>
           </template>
           
@@ -89,7 +120,7 @@ require_once '../includes/tailwind_header.php';
         </span>
 
         <!-- Stats Grid -->
-        <div class="grid grid-cols-2 gap-3 w-full mb-6">
+        <div class="grid grid-cols-2 gap-3 w-full mb-4">
           <!-- Nivel -->
           <div class="bg-black/20 border border-white/5 rounded-2xl p-3 flex flex-col items-center">
             <i class="fas fa-star text-yellow-400 text-lg drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] mb-1"></i>
@@ -104,8 +135,44 @@ require_once '../includes/tailwind_header.php';
           </div>
         </div>
 
-        <button type="submit" class="w-full max-w-[200px] py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-white/10 hover:border-blue-400 transition-all flex items-center justify-center gap-2 mx-auto">
-          <i class="fas fa-upload"></i> Guardar Foto
+        <!-- Nuevos Elementos Gamificados -->
+        <!-- Barra de Progreso de Nivel -->
+        <div class="w-full bg-black/30 rounded-xl p-3 border border-white/5 mb-4 text-left shadow-inner">
+          <div class="flex justify-between items-center mb-1.5">
+            <span class="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Próximo Nivel</span>
+            <span class="text-[10px] text-slate-400 font-bold">75%</span>
+          </div>
+          <div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden border border-gray-700">
+            <div class="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full shadow-[0_0_10px_rgba(56,189,248,0.8)]" style="width: 75%;"></div>
+          </div>
+          <p class="text-[9px] text-slate-500 mt-1.5 text-center uppercase tracking-widest font-semibold">Faltan 500 XP para el Nivel 2</p>
+        </div>
+
+        <!-- Racha y Medallas -->
+        <div class="grid grid-cols-2 gap-3 w-full mb-6">
+          <!-- Racha de Estudio -->
+          <div class="bg-black/30 border border-orange-500/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-inner group cursor-default">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-fire text-orange-500 text-lg drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] group-hover:scale-110 transition-transform animate-pulse"></i>
+              <span class="text-white font-bold text-lg">5</span>
+            </div>
+            <span class="text-[9px] text-orange-200/50 uppercase tracking-widest mt-1 text-center leading-tight">Días de<br>Racha</span>
+          </div>
+          <!-- Insignias Destacadas -->
+          <div class="bg-black/30 border border-purple-500/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-inner cursor-default">
+            <span class="text-[8px] text-purple-300/60 uppercase tracking-widest mb-1.5 font-bold">Insignias Top</span>
+            <div class="flex gap-1.5">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-[0_0_8px_rgba(250,204,21,0.6)] hover:scale-110 transition-transform"><i class="fas fa-award text-[10px] text-white"></i></div>
+              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shadow-[0_0_8px_rgba(59,130,246,0.6)] hover:scale-110 transition-transform"><i class="fas fa-brain text-[10px] text-white"></i></div>
+              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center shadow-[0_0_8px_rgba(168,85,247,0.6)] hover:scale-110 transition-transform"><i class="fas fa-star text-[10px] text-white"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" :disabled="isUploading" class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 text-blue-400 text-sm font-bold hover:bg-blue-600 hover:text-white hover:border-blue-400 transition-all flex items-center justify-center gap-2 mx-auto disabled:opacity-50">
+          <i class="fas fa-upload" x-show="!isUploading"></i>
+          <i class="fas fa-spinner fa-spin" x-show="isUploading" style="display: none;"></i>
+          <span x-text="isUploading ? 'Subiendo...' : 'Guardar Foto'"></span>
         </button>
       </form>
     </div>
