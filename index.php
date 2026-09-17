@@ -1063,40 +1063,7 @@ if (empty($subjects)) {
   </section>
 
   <!-- ── MODAL DE LOGIN CON ALPINE.JS ── -->
-  <div x-data="{ 
-         show: false,
-         showPassword: false,
-         errorMessage: '',
-         isLoading: false,
-         async submitLogin(e) {
-           this.isLoading = true;
-           this.errorMessage = '';
-           const formData = new FormData(e.target);
-           try {
-             const res = await fetch('pages/login.php', { method: 'POST', body: formData });
-             const text = await res.text();
-             try {
-               const json = JSON.parse(text);
-               if (json.success) {
-                 const btn = e.target.querySelector('button[type="submit"]');
-                 if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirigiendo...';
-                 setTimeout(() => {
-                   window.location.href = 'pages/dashboard.php';
-                 }, 500);
-                 return;
-               } else {
-                 this.errorMessage = json.message;
-               }
-             } catch(parseErr) {
-               console.error('Error del servidor (no es JSON válido):', text);
-               this.errorMessage = 'Error del servidor: ' + text.substring(0, 100);
-             }
-           } catch(err) {
-             this.errorMessage = 'Error de red. Verifica tu conexión.';
-           }
-           this.isLoading = false;
-         }
-       }" 
+  <div x-data="loginModal()" 
        @abrir-login.window="show = true"
        class="relative z-50">
     <div x-show="show" style="display: none;"
@@ -1203,63 +1170,6 @@ if (empty($subjects)) {
   </div>
 
   <!-- ── MODAL DE REGISTRO CON ALPINE.JS ── -->
-  <div x-data="{ 
-         show: false,
-         selectedRole: 'alumno',
-         selectedAvatar: '👨‍🎓', 
-         avatars: ['👨‍🎓', '👩‍🎓', '🧙‍♂️', '🥷', '🦸‍♀️', '🤖'],
-         password: '',
-         confirmPassword: '',
-         showPassword: false,
-         showConfirmPassword: false,
-         errorMessage: '',
-         isLoading: false,
-         get passwordStrength() {
-           let score = 0;
-           if(this.password.length > 5) score++;
-           if(this.password.length > 8) score++;
-           if(/[A-Z]/.test(this.password)) score++;
-           if(/[0-9]/.test(this.password)) score++;
-           if(/[^A-Za-z0-9]/.test(this.password)) score++;
-           return score;
-         },
-         get strengthColor() {
-           const colors = ['bg-gray-700', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'];
-           return colors[this.passwordStrength] || 'bg-green-400';
-         },
-         get strengthWidth() {
-           return (this.passwordStrength * 20) + '%';
-         },
-         async submitRegister(e) {
-           if(this.password !== this.confirmPassword) {
-             this.errorMessage = 'Las contraseñas no coinciden.';
-             return;
-           }
-           this.isLoading = true;
-           this.errorMessage = '';
-           const formData = new FormData(e.target);
-           try {
-             const res = await fetch('pages/register_process.php', { method: 'POST', body: formData });
-             const text = await res.text();
-             try {
-               const json = JSON.parse(text);
-               if (json.success) {
-                 const btn = e.target.querySelector('button[type="submit"]');
-                 if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirigiendo...';
-                 setTimeout(() => {
-                   window.location.href = 'pages/dashboard.php';
-                 }, 500);
-                 return;
-               } else {
-                 this.errorMessage = json.message;
-               }
-             } catch (parseErr) {
-               console.error('Error del servidor (no es JSON válido):', text);
-               this.errorMessage = 'Error del servidor: ' + text.substring(0, 100);
-             }
-           } catch(err) {
-             this.errorMessage = 'Error de red. Verifica tu conexión.';
-           }
            this.isLoading = false;
          }
        }" 
@@ -1389,6 +1299,106 @@ if (empty($subjects)) {
       </div>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('loginModal', () => ({
+        show: false,
+        showPassword: false,
+        errorMessage: '',
+        isLoading: false,
+        async submitLogin(e) {
+          this.isLoading = true;
+          this.errorMessage = '';
+          const formData = new FormData(e.target);
+          try {
+            const res = await fetch('pages/login.php', { method: 'POST', body: formData });
+            const text = await res.text();
+            try {
+              const json = JSON.parse(text);
+              if (json.success) {
+                const btn = e.target.querySelector('button[type="submit"]');
+                if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirigiendo...';
+                setTimeout(() => {
+                  window.location.href = 'pages/dashboard.php';
+                }, 500);
+                return;
+              } else {
+                this.errorMessage = json.message;
+              }
+            } catch(parseErr) {
+              console.error('Error del servidor (no es JSON válido):', text);
+              this.errorMessage = 'Error del servidor: ' + text.substring(0, 100);
+            }
+          } catch(err) {
+            this.errorMessage = 'Error de red. Verifica tu conexión.';
+          }
+          this.isLoading = false;
+        }
+      }));
+
+      Alpine.data('registerModal', () => ({
+        show: false,
+        selectedRole: 'alumno',
+        selectedAvatar: '👨‍🎓', 
+        avatars: ['👨‍🎓', '👩‍🎓', '🧙‍♂️', '🥷', '🦸‍♀️', '🤖'],
+        password: '',
+        confirmPassword: '',
+        showPassword: false,
+        showConfirmPassword: false,
+        errorMessage: '',
+        isLoading: false,
+        get passwordStrength() {
+          let score = 0;
+          if(this.password.length > 5) score++;
+          if(this.password.length > 8) score++;
+          if(/[A-Z]/.test(this.password)) score++;
+          if(/[0-9]/.test(this.password)) score++;
+          if(/[^A-Za-z0-9]/.test(this.password)) score++;
+          return score;
+        },
+        get strengthColor() {
+          const colors = ['bg-gray-700', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'];
+          return colors[this.passwordStrength] || 'bg-green-400';
+        },
+        get strengthWidth() {
+          return (this.passwordStrength * 20) + '%';
+        },
+        async submitRegister(e) {
+          if(this.password !== this.confirmPassword) {
+            this.errorMessage = 'Las contraseñas no coinciden.';
+            return;
+          }
+          this.isLoading = true;
+          this.errorMessage = '';
+          const formData = new FormData(e.target);
+          try {
+            const res = await fetch('pages/register_process.php', { method: 'POST', body: formData });
+            const text = await res.text();
+            try {
+              const json = JSON.parse(text);
+              if (json.success) {
+                const btn = e.target.querySelector('button[type="submit"]');
+                if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirigiendo...';
+                setTimeout(() => {
+                  window.location.href = 'pages/dashboard.php';
+                }, 500);
+                return;
+              } else {
+                this.errorMessage = json.message;
+              }
+            } catch (parseErr) {
+              console.error('Error del servidor (no es JSON válido):', text);
+              this.errorMessage = 'Error del servidor: ' + text.substring(0, 100);
+            }
+          } catch(err) {
+            this.errorMessage = 'Error de red. Verifica tu conexión.';
+          }
+          this.isLoading = false;
+        }
+      }));
+    });
+  </script>
 
 <?php require_once 'includes/footer.php'; ?>
 </div> <!-- Cierre del Contenedor Maestro de Accesibilidad -->
