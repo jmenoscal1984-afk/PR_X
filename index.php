@@ -1170,9 +1170,7 @@ if (empty($subjects)) {
   </div>
 
   <!-- ── MODAL DE REGISTRO CON ALPINE.JS ── -->
-           this.isLoading = false;
-         }
-       }" 
+  <div x-data="registerModal()" 
        @abrir-registro.window="show = true"
        class="relative z-50">
     
