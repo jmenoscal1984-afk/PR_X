@@ -17,10 +17,10 @@ if (file_exists($env_path)) {
 }
 
 // Configuración de constantes para la base de datos (fallback a getenv)
-define('DB_HOST', getenv('DB_HOST') ?: 'db.tvmaztgcmxjqkqrlijvhz.supabase.co');
-define('DB_PORT', getenv('DB_PORT') ?: '5432');
+define('DB_HOST', getenv('DB_HOST') ?: 'aws-0-us-east-1.pooler.supabase.com');
+define('DB_PORT', getenv('DB_PORT') ?: '6543');
 define('DB_NAME', getenv('DB_NAME') ?: 'postgres');
-define('DB_USER', getenv('DB_USER') ?: 'postgres');
+define('DB_USER', getenv('DB_USER') ?: 'postgres.tvmaztgcmxjqkqrlijvhz');
 define('DB_PASSWORD', getenv('DB_PASSWORD') ?: 'B?7SrK44+?^838');
 
 $pdo = null;
