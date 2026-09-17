@@ -1083,7 +1083,7 @@ if (empty($subjects)) {
                  this.errorMessage = json.message;
                }
              } catch(parseErr) {
-               console.error("Error del servidor (no es JSON válido):", text);
+               console.error('Error del servidor (no es JSON válido):', text);
                this.errorMessage = 'Error del servidor. Presiona F12 y revisa la Consola para ver el motivo exacto.';
              }
            } catch(err) {
@@ -1244,7 +1244,7 @@ if (empty($subjects)) {
                  this.errorMessage = json.message;
                }
              } catch (parseErr) {
-               console.error("Error del servidor (no es JSON válido):", text);
+               console.error('Error del servidor (no es JSON válido):', text);
                this.errorMessage = 'Error del servidor. Presiona F12 y revisa la Consola para ver el motivo exacto.';
              }
            } catch(err) {
