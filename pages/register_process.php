@@ -8,11 +8,11 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once '../includes/auth_middleware.php';
 require_once '../includes/db_connect.php';
 
-function sendJsonResponse($success, $message, $redirect = null) {
+function sendJsonResponse($success, $message = '') {
     ob_clean(); // Limpiar cualquier output indeseado antes del JSON
-    $response = ['success' => $success, 'message' => $message];
-    if ($redirect) {
-        $response['redirect'] = $redirect;
+    $response = ['success' => $success];
+    if (!empty($message)) {
+        $response['message'] = $message;
     }
     echo json_encode($response);
     exit();
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmtProfile->execute([$new_user_id, $nombre, $role_en]);
             } catch (Exception $e) {}
 
-            sendJsonResponse(true, "Cuenta creada con éxito", "pages/dashboard.php");
+            sendJsonResponse(true);
         } else {
             sendJsonResponse(false, "Error al crear la cuenta. Inténtalo más tarde.");
         }

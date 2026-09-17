@@ -5,7 +5,7 @@ session_start();
 
 // Si ya existe una sesión activa válida, avisamos que ya está autenticado
 if (isset($_SESSION['usuario_id'])) {
-    echo json_encode(['success' => true, 'redirect' => 'pages/dashboard.php']);
+    echo json_encode(['success' => true]);
     exit;
 }
 
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['usuario_nombre'] = $usuario['nombre_completo'];
                 $_SESSION['usuario_rol'] = $usuario['rol'];
                 
-                echo json_encode(['success' => true, 'redirect' => 'pages/dashboard.php']);
+                echo json_encode(['success' => true]);
                 exit; 
             } else {
                 echo json_encode(['success' => false, 'message' => 'Credenciales inválidas. Verifica tu correo y contraseña.']);

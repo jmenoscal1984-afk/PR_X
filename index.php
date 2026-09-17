@@ -1076,7 +1076,7 @@ if (empty($subjects)) {
              const res = await fetch('pages/login.php', { method: 'POST', body: formData });
              const json = await res.json();
              if (json.success) {
-               window.location.href = json.redirect;
+               window.location.href = 'pages/dashboard.php';
              } else {
                this.errorMessage = json.message;
              }
@@ -1231,7 +1231,7 @@ if (empty($subjects)) {
              const res = await fetch('pages/register_process.php', { method: 'POST', body: formData });
              const json = await res.json();
              if (json.success) {
-               window.location.href = json.redirect;
+               window.location.href = 'pages/dashboard.php';
              } else {
                this.errorMessage = json.message;
              }
