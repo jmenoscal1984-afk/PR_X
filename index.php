@@ -1318,7 +1318,8 @@ if (empty($subjects)) {
                 const btn = e.target.querySelector('button[type="submit"]');
                 if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirigiendo...';
                 setTimeout(() => {
-                  window.location.href = 'pages/dashboard.php';
+                  console.log('¡Éxito! Redirigiendo al dashboard...');
+                  window.location.replace('pages/dashboard.php');
                 }, 500);
                 return;
               } else {
@@ -1379,7 +1380,8 @@ if (empty($subjects)) {
                 const btn = e.target.querySelector('button[type="submit"]');
                 if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirigiendo...';
                 setTimeout(() => {
-                  window.location.href = 'pages/dashboard.php';
+                  console.log('¡Éxito! Redirigiendo al dashboard...');
+                  window.location.replace('pages/dashboard.php');
                 }, 500);
                 return;
               } else {
