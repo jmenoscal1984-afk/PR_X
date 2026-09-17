@@ -223,5 +223,6 @@ $base_dir = $base_dir ?? './';
   <script src="<?= htmlspecialchars($base_dir) ?>js/data.js"></script>
   <script src="<?= htmlspecialchars($base_dir) ?>js/storage.js"></script>
   <?php if (isset($extra_scripts)) echo $extra_scripts; ?>
+</div>
 </body>
 </html>

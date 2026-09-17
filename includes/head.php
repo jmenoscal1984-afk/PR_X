@@ -19,3 +19,4 @@ $page_title = $page_title ?? 'EduQuest Bachillerato — Aprende Jugando, Avanza 
   <?php if (isset($extra_head)) echo $extra_head; ?>
 </head>
 <body>
+<div x-data="{ openLogin: false, openRegister: false }" class="min-h-screen flex flex-col relative w-full">
