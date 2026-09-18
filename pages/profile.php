@@ -175,6 +175,68 @@ require_once '../includes/tailwind_header.php';
           <span x-text="isUploading ? 'Subiendo...' : 'Guardar Foto'"></span>
         </button>
       </form>
+
+      <!-- Widget: Radar de Aptitudes -->
+      <div class="bg-[#1E293B]/80 backdrop-blur border border-white/5 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+        <h3 class="flex items-center gap-2 text-sm font-bold text-white mb-5 uppercase tracking-widest">
+          <i class="fas fa-chart-radar text-blue-400"></i> Niveles de Habilidad
+        </h3>
+        <div class="space-y-4">
+          <!-- Habilidad 1 -->
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-400 font-bold mb-1 uppercase">
+              <span>Física de Vectores</span><span>85%</span>
+            </div>
+            <div class="w-full bg-black/40 rounded-full h-1">
+              <div class="bg-blue-500 h-1 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.8)]" style="width: 85%"></div>
+            </div>
+          </div>
+          <!-- Habilidad 2 -->
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-400 font-bold mb-1 uppercase">
+              <span>Lógica Matemática</span><span>60%</span>
+            </div>
+            <div class="w-full bg-black/40 rounded-full h-1">
+              <div class="bg-purple-500 h-1 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.8)]" style="width: 60%"></div>
+            </div>
+          </div>
+          <!-- Habilidad 3 -->
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-400 font-bold mb-1 uppercase">
+              <span>Historia y Cultura</span><span>95%</span>
+            </div>
+            <div class="w-full bg-black/40 rounded-full h-1">
+              <div class="bg-green-400 h-1 rounded-full shadow-[0_0_8px_rgba(74,222,128,0.8)]" style="width: 95%"></div>
+            </div>
+          </div>
+          <!-- Habilidad 4 -->
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-400 font-bold mb-1 uppercase">
+              <span>Electroestática</span><span>40%</span>
+            </div>
+            <div class="w-full bg-black/40 rounded-full h-1">
+              <div class="bg-cyan-400 h-1 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.8)]" style="width: 40%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget: Misiones de Exploración -->
+      <div class="bg-[#1E293B]/80 backdrop-blur border border-white/5 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+        <h3 class="flex items-center gap-2 text-sm font-bold text-white mb-5 uppercase tracking-widest">
+          <i class="fas fa-satellite-dish text-purple-400"></i> Misiones Pendientes
+        </h3>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
+            <div class="mt-0.5 w-4 h-4 rounded-full border border-slate-500 flex items-center justify-center group-hover:border-blue-400 transition-colors"></div>
+            <span class="text-xs text-slate-300 font-medium leading-relaxed">Supera el nivel 3 en Combinatoria</span>
+          </li>
+          <li class="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
+            <div class="mt-0.5 w-4 h-4 rounded-full border border-slate-500 flex items-center justify-center group-hover:border-purple-400 transition-colors"></div>
+            <span class="text-xs text-slate-300 font-medium leading-relaxed">Diseña una rutina física en el módulo de salud</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Columna Derecha: Formularios (2/3) -->
@@ -234,6 +296,41 @@ require_once '../includes/tailwind_header.php';
             </button>
           </div>
         </form>
+      </div>
+
+      <!-- Widget: Bitácora de Sistema (Timeline) -->
+      <div class="bg-[#1E293B]/80 backdrop-blur border border-white/5 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+        <h3 class="flex items-center gap-3 text-xl font-bold text-white mb-8 relative">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shadow-inner border border-cyan-500/30">
+            <i class="fas fa-stream"></i>
+          </div>
+          Bitácora de Sistema
+        </h3>
+        
+        <div class="relative border-l border-slate-700 ml-4 space-y-8 pb-4">
+          
+          <!-- Evento 1 -->
+          <div class="relative pl-6">
+            <div class="absolute -left-1.5 mt-1 w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.8)] border-2 border-[#1E293B]"></div>
+            <p class="text-sm text-white font-semibold">Desbloqueaste la insignia 'Maestro de la Lógica'</p>
+            <p class="text-xs text-slate-500 mt-1 uppercase tracking-wider font-bold">Hace 2 horas</p>
+          </div>
+
+          <!-- Evento 2 -->
+          <div class="relative pl-6">
+            <div class="absolute -left-1.5 mt-1 w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)] border-2 border-[#1E293B]"></div>
+            <p class="text-sm text-slate-300 font-medium">Completaste el módulo de Necesidades de Fondo Operativo</p>
+            <p class="text-xs text-slate-500 mt-1 uppercase tracking-wider font-bold">Ayer</p>
+          </div>
+
+          <!-- Evento 3 -->
+          <div class="relative pl-6">
+            <div class="absolute -left-1.5 mt-1 w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] border-2 border-[#1E293B]"></div>
+            <p class="text-sm text-slate-300 font-medium">Nuevo inicio de sesión detectado (Guayaquil, Ecuador)</p>
+            <p class="text-xs text-slate-500 mt-1 uppercase tracking-wider font-bold">Hace 3 días</p>
+          </div>
+
+        </div>
       </div>
 
       <!-- Tarjeta C: Peligro -->
