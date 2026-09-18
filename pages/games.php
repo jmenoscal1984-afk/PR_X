@@ -15,61 +15,87 @@ HTML;
 require_once '../includes/tailwind_header.php';
 ?>
 
-<div class="page-content">
-  <div class="game-demo-shell">
-    <main class="container game-hero" style="max-width:100%;">
-      <section class="game-hero-card" style="background:var(--bg-panel); border:2px solid var(--border-color); backdrop-filter:blur(16px);">
-        <div class="hero-inner">
-          <div class="hero-badge" style="background:var(--accent); color:white;">🕹️ Demo profesional de juegos educativos</div>
-          <h1 class="hero-title" style="color:var(--text-primary);">Juegos interactivos, ordenados y listos para aprender</h1>
-          <p class="hero-slogan" style="color:var(--text-secondary);">Elige tu modo de juego: sopas de letras, crucigramas y memoria visual. Todo con animación, feedback y sonidos para una experiencia más viva y profesional.</p>
-          <div class="game-badges">
-            <span style="background:rgba(255,255,255,0.1); border:1px solid var(--border-color);">Selección de juego</span>
-            <span style="background:rgba(255,255,255,0.1); border:1px solid var(--border-color);">Animación de fondo</span>
-            <span style="background:rgba(255,255,255,0.1); border:1px solid var(--border-color);">Sonidos</span>
-            <span style="background:rgba(255,255,255,0.1); border:1px solid var(--border-color);">XP y recompensas</span>
-          </div>
-        </div>
-      </section>
-
-      <section id="gamification" class="game-grid two-up" style="margin-top:2rem;">
-        <article class="glass-card" style="background:var(--bg-panel); border:2px solid var(--border-color);">
-          <h3 style="color:var(--text-primary);">Gamificación activa</h3>
-          <p style="color:var(--text-secondary);">Cada partida otorga XP, pistas y una sensación de progreso real.</p>
-        </article>
-        <article class="glass-card" style="background:var(--bg-panel); border:2px solid var(--border-color);">
-          <h3 style="color:var(--text-primary);">Experiencia visual</h3>
-          <p style="color:var(--text-secondary);">Interfaz limpia, paleta institucional y efectos de fondo para mantener al estudiante motivado.</p>
-        </article>
-      </section>
-
-      <section id="games" class="game-shell-grid" style="margin-top:2rem;">
-        <aside class="glass-card selector-card" style="background:var(--bg-panel); border:2px solid var(--border-color);">
-          <div>
-            <p class="eyebrow" style="color:var(--accent);">Elige un modo</p>
-            <h2 style="color:var(--text-primary);">¿Qué juego quieres jugar?</h2>
-            <p class="muted-copy" style="color:var(--text-secondary);">Tenemos tres experiencias distintas: sopa de letras, crucigrama y memoria visual.</p>
-          </div>
-          <div id="game-selector" class="game-selector-list"></div>
-          <div class="mini-tip" style="background:rgba(255,255,255,0.05); color:var(--text-secondary);">💡 Consejo: cada juego tiene sonido y feedback instantáneo para hacer la experiencia más inmersiva.</div>
-        </aside>
-
-        <article class="glass-card stage-card" style="background:var(--bg-panel); border:2px solid var(--border-color);">
-          <div class="stage-header">
-            <div>
-              <p class="eyebrow" id="stage-kicker" style="color:var(--accent);">Modo activo</p>
-              <h2 id="stage-title" style="color:var(--text-primary);">Sopa de letras</h2>
-            </div>
-            <button id="reset-game" class="game-btn secondary" style="background:transparent; border:2px solid var(--border-color); color:var(--text-primary);">Reiniciar</button>
-          </div>
-          <p id="stage-copy" class="muted-copy" style="color:var(--text-secondary);">Haz clic sobre letras consecutivas para formar una palabra escondida.</p>
-          <div id="active-game" class="game-board-shell"></div>
-          <div id="game-feedback" class="feedback" style="background:rgba(255,255,255,0.05); color:var(--text-primary);">Selecciona un juego en el panel para comenzar.</div>
-        </article>
-      </section>
-    </main>
+<main class="max-w-7xl mx-auto px-4 py-12 animate-[fadeIn_0.5s_ease-out]">
+  <!-- 1. Cabecera de la Sala (Hero Section) -->
+  <div class="text-center mb-16 relative z-10">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6 shadow-lg backdrop-blur-md">
+      <i class="fas fa-bolt text-yellow-400"></i> Potenciado por IA
+    </div>
+    <h1 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight drop-shadow-2xl">
+      Simuladores de <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Conocimiento</span>
+    </h1>
+    <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+      Pon a prueba tus habilidades, completa las misiones de tus profesores y gana XP para liderar el ranking.
+    </p>
   </div>
-</div>
+
+  <!-- 2. Cuadrícula de Juegos (El Arcade) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+    
+    <!-- Tarjeta 1: Quiz Táctico -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-md border border-white/5 rounded-3xl p-6 shadow-xl hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(59,130,246,0.4)] transition-all duration-300 flex flex-col group relative overflow-hidden">
+      <!-- Indicador Estado -->
+      <div class="absolute top-4 right-4 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+        <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Nuevo Reto</span>
+      </div>
+      
+      <div class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-3xl text-blue-400 mb-6 group-hover:scale-110 transition-transform">
+        <i class="fas fa-bolt"></i>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-3">Quiz Táctico</h3>
+      <p class="text-slate-400 text-sm mb-6 flex-1">Preguntas de opción múltiple generadas a partir de tu última clase.</p>
+      
+      <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+        <div class="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-yellow-500/20 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs font-black shadow-inner">
+          +50 XP
+        </div>
+        <button class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]">
+          Iniciar Quiz
+        </button>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2: Sopa de Letras Cuántica -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-md border border-white/5 rounded-3xl p-6 shadow-xl hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(168,85,247,0.4)] transition-all duration-300 flex flex-col group relative overflow-hidden">
+      
+      <div class="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-3xl text-purple-400 mb-6 group-hover:scale-110 transition-transform">
+        <i class="fas fa-border-all"></i>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-3">Sopa de Letras Cuántica</h3>
+      <p class="text-slate-400 text-sm mb-6 flex-1">Encuentra los conceptos clave ocultos en el menor tiempo posible.</p>
+      
+      <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+        <div class="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-yellow-500/20 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs font-black shadow-inner">
+          +75 XP
+        </div>
+        <button class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_20px_rgba(168,85,247,0.6)]">
+          Buscar Palabras
+        </button>
+      </div>
+    </div>
+
+    <!-- Tarjeta 3: Crucigrama Estelar -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-md border border-white/5 rounded-3xl p-6 shadow-xl hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all duration-300 flex flex-col group relative overflow-hidden">
+      
+      <div class="w-16 h-16 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-3xl text-orange-400 mb-6 group-hover:scale-110 transition-transform">
+        <i class="fas fa-puzzle-piece"></i>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-3">Crucigrama Estelar</h3>
+      <p class="text-slate-400 text-sm mb-6 flex-1">Descifra las pistas y completa el mapa de palabras de la lección.</p>
+      
+      <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+        <div class="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-yellow-500/20 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs font-black shadow-inner">
+          +100 XP
+        </div>
+        <button class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all shadow-[0_0_15px_rgba(249,115,22,0.3)] hover:shadow-[0_0_20px_rgba(249,115,22,0.6)]">
+          Resolver
+        </button>
+      </div>
+    </div>
+
+  </div>
+</main>
 
 <script src="../js/games-demo.js"></script>
 

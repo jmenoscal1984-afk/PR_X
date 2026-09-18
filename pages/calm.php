@@ -27,49 +27,107 @@ HTML;
 require_once '../includes/tailwind_header.php';
 ?>
 
-<div class="h-[calc(100vh-160px)] w-full flex flex-col items-center justify-center animate-[fadeIn_1s_ease-out] relative max-w-4xl mx-auto">
-  
-  <div class="absolute top-4 left-4">
-    <a href="dashboard.php" class="btn bg-theme_panel text-theme_text hover:text-theme_accent border border-theme_border rounded-full px-6 py-3 font-bold flex items-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-theme_accent transition-all hover:scale-105">
-      <i class="fas fa-arrow-left"></i> Volver
+<main class="h-[calc(100vh-100px)] w-full flex flex-col items-center justify-center animate-[fadeIn_1s_ease-out] relative max-w-[90rem] mx-auto px-4 lg:px-12" x-data="{
+    modoResp: 'caja',
+    audioActivo: 'alpha',
+    fraseIndex: 0,
+    frases: [
+        'El espacio es vasto, al igual que tu capacidad de aprender.',
+        'La quietud de la mente es como el vacío del cosmos: pura calma.',
+        'Respira profundo. Cada exhalación suelta la presión de la gravedad.',
+        'No hay errores, solo datos de navegación para tu siguiente viaje.'
+    ],
+    nextFrase() { this.fraseIndex = (this.fraseIndex + 1) % this.frases.length; },
+    textoFrustracion: '',
+    liberado: false,
+    liberar() {
+        if(this.textoFrustracion.trim() !== '') {
+            this.textoFrustracion = '';
+            this.liberado = true;
+            setTimeout(() => { this.liberado = false; }, 3000);
+        }
+    }
+}">
+    
+  <!-- Layout Principal (3 columnas) -->
+  <div class="flex flex-col lg:flex-row items-center justify-between w-full gap-8 lg:gap-12 z-10 flex-1 py-12">
+    
+    <!-- PANEL IZQUIERDO: Estación Ambiental -->
+    <div class="w-full lg:w-72 opacity-40 hover:opacity-100 transition-opacity duration-500 bg-[#1E293B]/40 backdrop-blur-md border border-white/5 p-6 rounded-3xl shadow-xl flex flex-col gap-4 order-2 lg:order-1">
+      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest text-center mb-2">Paisajes Sonoros</h3>
+      
+      <button @click="audioActivo = 'alpha'" :class="audioActivo === 'alpha' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'bg-transparent text-slate-400 border-white/5 hover:bg-white/5'" class="w-full py-3.5 px-4 rounded-xl border flex items-center gap-3 text-sm font-medium transition-all">
+        <i class="fas fa-brain w-5"></i> Frecuencia Alpha
+      </button>
+      
+      <button @click="audioActivo = 'lluvia'" :class="audioActivo === 'lluvia' ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-transparent text-slate-400 border-white/5 hover:bg-white/5'" class="w-full py-3.5 px-4 rounded-xl border flex items-center gap-3 text-sm font-medium transition-all">
+        <i class="fas fa-cloud-rain w-5"></i> Lluvia Estelar
+      </button>
+
+      <button @click="audioActivo = 'ruido'" :class="audioActivo === 'ruido' ? 'bg-purple-500/20 text-purple-400 border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]' : 'bg-transparent text-slate-400 border-white/5 hover:bg-white/5'" class="w-full py-3.5 px-4 rounded-xl border flex items-center gap-3 text-sm font-medium transition-all">
+        <i class="fas fa-water w-5"></i> Ruido Blanco
+      </button>
+    </div>
+
+    <!-- ZONA CENTRAL: La Burbuja -->
+    <div class="flex-1 flex flex-col items-center justify-center relative order-1 lg:order-2 w-full max-w-lg min-h-[400px]">
+      
+      <!-- Selector de Modo -->
+      <div class="absolute top-0 opacity-40 hover:opacity-100 transition-opacity duration-500 flex gap-2 p-1.5 bg-black/40 rounded-full border border-white/10 z-20">
+        <button @click="modoResp = 'caja'" :class="modoResp === 'caja' ? 'bg-white/15 text-white' : 'text-slate-500 hover:text-slate-300'" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all">Caja</button>
+        <button @click="modoResp = '478'" :class="modoResp === '478' ? 'bg-white/15 text-white' : 'text-slate-500 hover:text-slate-300'" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all">4-7-8</button>
+      </div>
+
+      <!-- Burbuja -->
+      <div class="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center mt-12">
+        <!-- Círculos decorativos -->
+        <div class="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full animate-[spin_30s_linear_infinite]"></div>
+        <div class="absolute inset-6 border border-cyan-500/10 rounded-full animate-[spin_20s_linear_infinite_reverse]"></div>
+        
+        <!-- CSS Animado de respiración -->
+        <div class="breathe-circle w-56 h-56 md:w-72 md:h-72 rounded-full bg-gradient-to-tr from-cyan-400/10 to-blue-500/10 border border-cyan-400/40 shadow-[0_0_60px_rgba(34,211,238,0.2)] flex items-center justify-center backdrop-blur-sm">
+          <div class="w-40 h-40 md:w-56 md:h-56 rounded-full bg-gradient-to-tr from-cyan-500/30 to-blue-500/30 blur-xl animate-pulse"></div>
+        </div>
+
+        <div id="breathe-text" class="absolute font-heading text-3xl md:text-4xl font-black text-white tracking-widest drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
+          INHALA
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL DERECHO: Citas de Anclaje -->
+    <div class="w-full lg:w-72 opacity-40 hover:opacity-100 transition-opacity duration-500 bg-[#1E293B]/40 backdrop-blur-md border border-white/5 p-8 rounded-3xl shadow-xl flex flex-col justify-center text-center order-3 min-h-[200px]">
+      <i class="fas fa-quote-left text-3xl text-white/10 mb-4"></i>
+      <p class="text-sm text-slate-300 italic font-medium leading-relaxed" x-text="frases[fraseIndex]" x-transition></p>
+      <button @click="nextFrase()" class="mt-6 text-xs text-slate-500 hover:text-white transition-colors uppercase tracking-widest font-bold flex items-center justify-center gap-2 mx-auto">
+        <i class="fas fa-sync-alt"></i> Siguiente
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ZONA INFERIOR: Cápsula de Liberación -->
+  <div class="w-full max-w-2xl opacity-40 hover:opacity-100 transition-opacity duration-500 z-10 pb-8">
+    <div class="relative flex items-center">
+      <input type="text" x-model="textoFrustracion" @keydown.enter="liberar()" placeholder="¿Qué te frustra en este momento? Escríbelo y suéltalo..." class="w-full bg-black/40 border border-white/10 text-white rounded-full pl-8 pr-44 py-4 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all placeholder-slate-600 text-sm shadow-inner">
+      <button @click="liberar()" class="absolute right-2 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white text-xs font-bold px-6 py-2.5 rounded-full transition-all shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+        Soltar al espacio
+      </button>
+    </div>
+    <!-- Mensaje de éxito -->
+    <div x-show="liberado" x-transition.opacity class="text-center mt-3 text-purple-400 text-xs font-bold tracking-widest uppercase h-4">
+      <i class="fas fa-wind mr-1"></i> Liberado en el vacío cósmico.
+    </div>
+  </div>
+
+  <!-- Botón Volver -->
+  <div class="absolute top-6 left-6 opacity-40 hover:opacity-100 transition-opacity duration-500 z-50">
+    <a href="dashboard.php" class="bg-black/40 text-slate-300 hover:text-white border border-white/10 rounded-full px-5 py-2.5 text-sm font-bold flex items-center gap-2 transition-all hover:bg-black/60">
+      <i class="fas fa-arrow-left"></i> Volver al panel
     </a>
   </div>
 
-  <div class="text-center mb-12 z-10">
-    <h1 class="font-heading text-4xl md:text-5xl font-extrabold text-theme_text mb-4 tracking-tight">Mi Rincón Seguro</h1>
-    <p class="text-theme_text_muted text-lg max-w-lg mx-auto font-medium">Tómate un respiro. Sincroniza tu respiración con la burbuja cósmica para recuperar tu energía.</p>
-  </div>
-
-  <!-- Burbuja de Respiración -->
-  <div class="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center mb-16 z-10">
-    <!-- Círculos decorativos externos -->
-    <div class="absolute inset-0 border-2 border-dashed border-emerald-500/20 rounded-full animate-[spin_30s_linear_infinite]"></div>
-    <div class="absolute inset-4 border border-emerald-500/10 rounded-full animate-[spin_20s_linear_infinite_reverse]"></div>
-    
-    <!-- Burbuja animada (CSS breathe) -->
-    <div class="breathe-circle w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-tr from-emerald-400/20 to-cyan-400/20 border-2 border-emerald-400 shadow-[0_0_50px_rgba(52,211,153,0.4)] flex items-center justify-center backdrop-blur-sm">
-      <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-tr from-emerald-500/40 to-cyan-500/40 blur-md animate-pulse"></div>
-    </div>
-
-    <!-- Indicador de texto dinámico via JS -->
-    <div id="breathe-text" class="absolute font-heading text-2xl font-extrabold text-white text-shadow-md tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-      INHALA
-    </div>
-  </div>
-
-  <!-- Controles de Audio Relajante -->
-  <div class="glass-panel p-6 rounded-3xl border border-theme_border shadow-xl flex items-center gap-8 z-10">
-    <div class="flex flex-col">
-      <span class="font-bold text-theme_text">Frecuencia de Calma</span>
-      <span class="text-sm text-theme_text_muted">Ondas Alpha / Ruido Marrón</span>
-    </div>
-    
-    <button id="toggle-audio" aria-label="Reproducir audio relajante" class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500/50 flex items-center justify-center text-2xl hover:bg-emerald-500 hover:text-white transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500 hover:scale-110 hover:shadow-[0_0_20px_rgba(52,211,153,0.4)]">
-      <i class="fas fa-play" id="audio-icon"></i>
-    </button>
-  </div>
-
-</div>
+</main>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
