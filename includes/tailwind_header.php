@@ -219,8 +219,9 @@ $page_title = $page_title ?? 'PRX Academy';
         </div>
 
         <?php
-        $activeClass = "border-l-4 border-blue-500 bg-gradient-to-r from-blue-500/20 to-transparent text-blue-400";
-        $inactiveClass = "text-slate-400 bg-transparent hover:translate-x-1 hover:text-white hover:bg-white/5 border-l-4 border-transparent transition-all duration-300";
+        $activeClass = "bg-blue-600/10 border border-blue-500/30 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]";
+        $inactiveClass = "text-slate-400 bg-transparent hover:bg-white/5 hover:text-white border border-transparent";
+        $baseClass = "flex items-center gap-4 mx-3 rounded-xl py-3 px-4 min-h-[44px] font-medium active:scale-95 active:bg-blue-500/30 transition-all duration-200 group";
         ?>
 
         <!-- Navegación Principal -->
@@ -228,18 +229,18 @@ $page_title = $page_title ?? 'PRX Academy';
             
             <!-- 2. Sección PRINCIPAL -->
             <div>
-                <p class="text-[10px] tracking-[0.2em] text-slate-500 uppercase font-black mt-6 mb-3 px-6">Principal</p>
-                <div class="flex flex-col">
-                    <a href="dashboard.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'dashboard.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                <p class="text-[10px] tracking-[0.2em] text-slate-500 uppercase font-black mt-2 mb-3 px-7">Principal</p>
+                <div class="flex flex-col space-y-1">
+                    <a href="dashboard.php" class="<?= $baseClass ?> <?= $current_page == 'dashboard.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-border-all text-lg transition-transform <?= $current_page == 'dashboard.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Dashboard</span>
                     </a>
-                    <a href="profile.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'profile.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="profile.php" class="<?= $baseClass ?> <?= $current_page == 'profile.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-user text-lg transition-transform <?= $current_page == 'profile.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Mi Perfil</span>
                     </a>
                 </div>
@@ -247,56 +248,56 @@ $page_title = $page_title ?? 'PRX Academy';
 
             <!-- 3. Sección APRENDER -->
             <div>
-                <p class="text-[10px] tracking-[0.2em] text-slate-500 uppercase font-black mt-6 mb-3 px-6">Aprender</p>
-                <div class="flex flex-col">
+                <p class="text-[10px] tracking-[0.2em] text-slate-500 uppercase font-black mt-6 mb-3 px-7">Aprender</p>
+                <div class="flex flex-col space-y-1">
                     <?php if ($userRole === 'profesor'): ?>
-                    <a href="subjects.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'subjects.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="subjects.php" class="<?= $baseClass ?> <?= $current_page == 'subjects.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-users text-lg transition-transform <?= $current_page == 'subjects.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Mis Aulas</span>
                     </a>
-                    <a href="games.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'games.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="games.php" class="<?= $baseClass ?> <?= $current_page == 'games.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-tasks text-lg transition-transform <?= $current_page == 'games.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Crear Misión</span>
                     </a>
-                    <a href="ranking.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'ranking.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="ranking.php" class="<?= $baseClass ?> <?= $current_page == 'ranking.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-chart-line text-lg transition-transform <?= $current_page == 'ranking.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Progreso General</span>
                     </a>
                     <?php else: ?>
-                    <a href="subjects.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'subjects.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="subjects.php" class="<?= $baseClass ?> <?= $current_page == 'subjects.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-book text-lg transition-transform <?= $current_page == 'subjects.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Materias</span>
                     </a>
-                    <a href="games.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'games.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="games.php" class="<?= $baseClass ?> <?= $current_page == 'games.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-gamepad text-lg transition-transform <?= $current_page == 'games.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Juegos Demo</span>
                     </a>
-                    <a href="achievements.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'achievements.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="achievements.php" class="<?= $baseClass ?> <?= $current_page == 'achievements.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-briefcase text-lg transition-transform <?= $current_page == 'achievements.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Mochila de Calcomanías</span>
                     </a>
-                    <a href="ranking.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'ranking.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="ranking.php" class="<?= $baseClass ?> <?= $current_page == 'ranking.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-trophy text-lg transition-transform <?= $current_page == 'ranking.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Ranking</span>
                     </a>
-                    <a href="calm.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium transition-all duration-300 group <?= $current_page == 'calm.php' ? 'border-l-4 border-emerald-500 bg-gradient-to-r from-emerald-500/20 to-transparent text-emerald-400' : 'text-slate-400 bg-transparent hover:translate-x-1 hover:text-white hover:bg-emerald-500/10 border-l-4 border-transparent' ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="calm.php" class="flex items-center gap-4 mx-3 rounded-xl py-3 px-4 min-h-[44px] font-medium active:scale-95 active:bg-emerald-500/30 transition-all duration-200 group <?= $current_page == 'calm.php' ? 'bg-emerald-600/10 border border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'text-slate-400 bg-transparent hover:bg-white/5 hover:text-white border border-transparent' ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-spa text-lg transition-transform <?= $current_page == 'calm.php' ? 'text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'group-hover:scale-110 group-hover:text-emerald-400' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Mi Rincón Seguro</span>
                     </a>
                     <?php endif; ?>
@@ -305,18 +306,18 @@ $page_title = $page_title ?? 'PRX Academy';
 
             <!-- 4. Sección SISTEMA -->
             <div>
-                <p class="text-[10px] tracking-[0.2em] text-slate-500 uppercase font-black mt-6 mb-3 px-6">Sistema</p>
-                <div class="flex flex-col">
-                    <a href="settings.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium group <?= $current_page == 'settings.php' ? $activeClass : $inactiveClass ?>">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                <p class="text-[10px] tracking-[0.2em] text-slate-500 uppercase font-black mt-6 mb-3 px-7">Sistema</p>
+                <div class="flex flex-col space-y-1">
+                    <a href="settings.php" class="<?= $baseClass ?> <?= $current_page == 'settings.php' ? $activeClass : $inactiveClass ?>">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-cog text-lg transition-transform <?= $current_page == 'settings.php' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110' ?>"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Configuración</span>
                     </a>
-                    <a href="logout.php" class="flex items-center gap-4 px-6 py-3 min-h-[44px] font-medium text-slate-400 bg-transparent hover:translate-x-1 hover:text-red-400 hover:bg-red-500/10 border-l-4 border-transparent transition-all duration-300 group">
-                        <div class="w-6 flex-shrink-0 flex items-center justify-center">
+                    <a href="logout.php" class="flex items-center gap-4 mx-3 rounded-xl py-3 px-4 min-h-[44px] font-medium text-slate-400 bg-transparent hover:bg-red-500/10 hover:text-red-400 border border-transparent active:scale-95 active:bg-red-500/30 transition-all duration-200 group">
+                        <span class="w-6 flex justify-center flex-shrink-0">
                             <i class="fas fa-sign-out-alt text-lg transition-transform group-hover:scale-110"></i> 
-                        </div>
+                        </span>
                         <span class="text-sm">Cerrar Sesión</span>
                     </a>
                 </div>
